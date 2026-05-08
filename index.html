@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Aeon360 Campaign Report — Pacific Airways · Bali Sale 2026</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #f7f8fb;
+    --panel: #ffffff;
+    --ink: #0e1726;
+    --ink-2: #2a3346;
+    --muted: #6b7488;
+    --line: #e5e8ef;
+    --line-2: #eef0f5;
+    --brand: #b3122a;        /* Aeon-inspired red */
+    --brand-soft: #fde7eb;
+    --accent: #1d4ed8;
+    --accent-soft: #e6edff;
+    --good: #117a4f;
+    --good-soft: #dcf3e6;
+    --warn: #a55a00;
+    --warn-soft: #fde9cf;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 28px 24px 80px; }
+
+  /* Header */
+  .topbar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 14px; border-bottom: 1px solid var(--line); margin-bottom: 22px; }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-mark { width: 32px; height: 32px; border-radius: 8px; background: var(--brand); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; letter-spacing: -0.02em; font-size: 14px; }
+  .logo-name { font-weight: 700; font-size: 16px; letter-spacing: -0.01em; }
+  .logo-name span { color: var(--muted); font-weight: 500; margin-left: 6px; font-size: 12px; }
+  .powered { font-size: 11px; color: var(--muted); }
+  .powered b { color: var(--ink-2); }
+
+  /* Hero */
+  .hero { background: linear-gradient(135deg, #ffffff 0%, #fbfafd 100%); border: 1px solid var(--line); border-radius: 16px; padding: 22px 24px; margin-bottom: 18px; display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; }
+  .hero h1 { font-size: 24px; font-weight: 700; margin: 6px 0 4px; letter-spacing: -0.01em; }
+  .hero .crumb { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.14em; }
+  .hero .meta { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; margin-top: 14px; font-size: 13px; }
+  .hero .meta .l { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; }
+  .hero .meta .v { color: var(--ink); font-weight: 600; margin-top: 2px; }
+  .status { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: var(--good-soft); color: var(--good); border-radius: 999px; font-size: 11px; font-weight: 600; }
+  .status .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--good); }
+  .creative-card { background: linear-gradient(135deg, #102045 0%, #1d4ed8 100%); border-radius: 12px; padding: 20px; color: #fff; display: flex; flex-direction: column; justify-content: space-between; min-height: 200px; position: relative; overflow: hidden; }
+  .creative-card::before { content: ''; position: absolute; right: -50px; top: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(255,255,255,0.18), transparent 60%); border-radius: 50%; }
+  .creative-card .tag { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.85; }
+  .creative-card .title { font-size: 22px; font-weight: 700; margin-top: 4px; line-height: 1.15; }
+  .creative-card .price { font-size: 14px; opacity: 0.85; margin-top: 6px; }
+  .creative-card .cta { background: #fff; color: #102045; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; align-self: flex-start; margin-top: 14px; }
+
+  /* KPI strip */
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 18px; }
+  .kpi { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  .kpi .l { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  .kpi .v { font-size: 26px; font-weight: 700; margin-top: 6px; letter-spacing: -0.01em; }
+  .kpi .delta { font-size: 12px; margin-top: 4px; display: flex; align-items: center; gap: 4px; }
+  .kpi .delta.up { color: var(--good); }
+  .kpi .delta.down { color: var(--brand); }
+  .kpi .bench { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* Sections */
+  .section-title { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.18em; margin: 22px 0 10px; }
+  .grid { display: grid; gap: 14px; }
+  .grid-2 { grid-template-columns: 2fr 1fr; }
+  .grid-2-eq { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 980px) { .hero, .kpis, .grid-2, .grid-2-eq, .grid-3 { grid-template-columns: 1fr; } }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+  .card h2 { font-size: 16px; margin: 0 0 4px; font-weight: 700; }
+  .card p.sub { color: var(--muted); font-size: 12px; margin: 0 0 12px; }
+
+  /* Funnel */
+  .funnel { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+  .stage { display: grid; grid-template-columns: 180px 1fr 110px 80px; gap: 12px; align-items: center; font-size: 13px; }
+  .stage .name { color: var(--ink-2); font-weight: 500; }
+  .stage .bar { height: 22px; background: var(--line-2); border-radius: 6px; overflow: hidden; position: relative; }
+  .stage .fill { height: 100%; background: linear-gradient(90deg, var(--accent), #3b82f6); border-radius: 6px; }
+  .stage .num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .stage .pct { text-align: right; color: var(--muted); font-size: 12px; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line-2); }
+  th { color: var(--muted); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tr:last-child td { border-bottom: none; }
+
+  /* Heatmap */
+  .heatmap { position: relative; background: linear-gradient(180deg, #f9fafb, #ffffff); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
+  .phone { position: relative; width: 100%; max-width: 240px; height: 380px; margin: 0 auto; background: #fff; border: 2px solid var(--ink); border-radius: 22px; overflow: hidden; }
+  .phone .status-bar { height: 22px; background: var(--ink); }
+  .phone .nav { height: 36px; border-bottom: 1px solid var(--line); display: flex; align-items: center; padding: 0 12px; gap: 6px; font-size: 10px; color: var(--muted); }
+  .phone .placement { position: relative; height: 110px; margin: 8px; border-radius: 8px; background: linear-gradient(135deg, #102045, #1d4ed8); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+  .heat-blob { position: absolute; border-radius: 50%; pointer-events: none; mix-blend-mode: multiply; }
+  .heat-1 { width: 80px; height: 80px; left: 60px; top: 10px; background: radial-gradient(circle, rgba(255,40,40,0.55), rgba(255,40,40,0) 70%); }
+  .heat-2 { width: 60px; height: 60px; left: 130px; top: 40px; background: radial-gradient(circle, rgba(255,140,0,0.5), rgba(255,140,0,0) 70%); }
+  .heat-3 { width: 40px; height: 40px; left: 20px; top: 60px; background: radial-gradient(circle, rgba(255,220,0,0.45), rgba(255,220,0,0) 70%); }
+  .phone .row { display: flex; gap: 6px; padding: 0 8px; margin-top: 6px; }
+  .phone .tile { flex: 1; height: 60px; background: #f1f3f8; border-radius: 6px; }
+  .phone .lines { padding: 0 12px; margin-top: 10px; }
+  .phone .lines div { height: 6px; background: #eef0f5; border-radius: 3px; margin-bottom: 5px; }
+  .phone .lines div:nth-child(2) { width: 80%; }
+  .phone .lines div:nth-child(3) { width: 60%; }
+
+  /* Replay clip cards */
+  .clip { display: flex; gap: 12px; padding: 12px; border: 1px solid var(--line); border-radius: 10px; align-items: flex-start; background: var(--panel); }
+  .clip .thumb { width: 90px; height: 60px; flex-shrink: 0; background: linear-gradient(135deg, #102045, #1d4ed8); border-radius: 6px; position: relative; display: flex; align-items: center; justify-content: center; color: #fff; }
+  .clip .thumb::after { content: '▶'; font-size: 16px; }
+  .clip .thumb.warn { background: linear-gradient(135deg, #b3122a, #e94560); }
+  .clip .body h3 { font-size: 13px; font-weight: 600; margin: 0 0 4px; }
+  .clip .body p { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.4; }
+  .clip .body .stat { font-size: 11px; color: var(--ink-2); margin-top: 6px; font-weight: 600; }
+
+  /* Insights */
+  .insight { display: flex; gap: 12px; padding: 12px 14px; background: var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 8px; margin-bottom: 10px; }
+  .insight.warn { background: var(--warn-soft); border-left-color: var(--warn); }
+  .insight.win { background: var(--good-soft); border-left-color: var(--good); }
+  .insight .icon { font-size: 16px; flex-shrink: 0; }
+  .insight h3 { font-size: 13px; margin: 0 0 4px; font-weight: 700; }
+  .insight p { font-size: 12px; margin: 0; color: var(--ink-2); line-height: 1.5; }
+
+  /* Pills */
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+  .pill.green { background: var(--good-soft); color: var(--good); }
+  .pill.blue { background: var(--accent-soft); color: var(--accent); }
+  .pill.amber { background: var(--warn-soft); color: var(--warn); }
+  .pill.red { background: var(--brand-soft); color: var(--brand); }
+  .pill.gray { background: var(--line-2); color: var(--muted); }
+
+  /* Audience bars */
+  .seg { display: grid; grid-template-columns: 130px 1fr 60px; gap: 10px; align-items: center; margin-bottom: 8px; font-size: 12px; }
+  .seg .name { color: var(--ink-2); }
+  .seg .bar { height: 8px; background: var(--line-2); border-radius: 4px; overflow: hidden; }
+  .seg .fill { height: 100%; background: var(--brand); border-radius: 4px; }
+  .seg .v { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--ink); }
+
+  /* Creative compare */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .creative-row { padding: 12px; border: 1px solid var(--line); border-radius: 10px; }
+  .creative-row .swatch { height: 80px; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 13px; letter-spacing: 0.04em; }
+  .creative-row .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 12px; }
+  .creative-row .stats .l { color: var(--muted); font-size: 11px; }
+  .creative-row .stats .v { font-weight: 600; }
+
+  .footer { color: var(--muted); font-size: 11px; margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 20px; }
+
+  .chart-box { height: 240px; }
+  .chart-sm { height: 180px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="logo">
+      <div class="logo-mark">A</div>
+      <div class="logo-name">Aeon360 <span>Commerce Media</span></div>
+    </div>
+    <div class="powered">Powered by <b>ContentSquare</b> · Data refreshed 2026-05-08 09:02 MYT</div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div>
+      <div class="crumb">Campaign Report · Brand Self-Serve</div>
+      <h1>Pacific Airways · Bali Sale 2026</h1>
+      <span class="status"><span class="dot"></span> Active · 3 days remaining</span>
+      <div class="meta">
+        <div><div class="l">Placement</div><div class="v">Hero Carousel + Travel Sponsored Tile</div></div>
+        <div><div class="l">Period</div><div class="v">Apr 15 – May 11, 2026</div></div>
+        <div><div class="l">Booked Budget</div><div class="v">USD $48,000</div></div>
+        <div><div class="l">Spend to date</div><div class="v">$41,200 <span class="muted">(86%)</span></div></div>
+        <div><div class="l">Audience</div><div class="v">Travel-intent · MY/SG/TH · 22–45</div></div>
+        <div><div class="l">Account Manager</div><div class="v">Hasif Rashid · Aeon360</div></div>
+      </div>
+    </div>
+    <div class="creative-card">
+      <div>
+        <div class="tag">Featured Creative</div>
+        <div class="title">Bali, your way<br/>From RM 388</div>
+        <div class="price">Direct flights · 7 daily departures</div>
+      </div>
+      <div class="cta">Book now ›</div>
+    </div>
+  </div>
+
+  <!-- KPI STRIP -->
+  <div class="kpis">
+    <div class="kpi">
+      <div class="l">Impressions</div>
+      <div class="v">12.42M</div>
+      <div class="delta up">▲ pacing 104% of plan</div>
+      <div class="bench">Goal: 11.95M</div>
+    </div>
+    <div class="kpi">
+      <div class="l">Click-through rate</div>
+      <div class="v">3.18%</div>
+      <div class="delta up">▲ 1.4× category benchmark</div>
+      <div class="bench">SEA travel benchmark: 2.20%</div>
+    </div>
+    <div class="kpi">
+      <div class="l">In-app conversions</div>
+      <div class="v">8,420</div>
+      <div class="delta up">▲ 31% vs prior campaign</div>
+      <div class="bench">Conv. rate: 2.13%</div>
+    </div>
+    <div class="kpi">
+      <div class="l">Estimated ROAS</div>
+      <div class="v">6.2×</div>
+      <div class="delta up">▲ above 4.5× goal</div>
+      <div class="bench">Includes 7-day post-click window</div>
+    </div>
+  </div>
+
+  <!-- DAILY PERFORMANCE + AUDIENCE -->
+  <div class="grid grid-2">
+    <div class="card">
+      <h2>Daily performance</h2>
+      <p class="sub">Impressions and clicks delivered against plan, daily.</p>
+      <div class="chart-box"><canvas id="dailyChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h2>Audience cohorts</h2>
+      <p class="sub">Share of clicks by user segment.</p>
+      <div class="seg"><div class="name">Frequent flyers</div><div class="bar"><div class="fill" style="width: 84%"></div></div><div class="v">34%</div></div>
+      <div class="seg"><div class="name">Young professionals</div><div class="bar"><div class="fill" style="width: 70%"></div></div><div class="v">28%</div></div>
+      <div class="seg"><div class="name">Couples / honeymoon</div><div class="bar"><div class="fill" style="width: 47%"></div></div><div class="v">19%</div></div>
+      <div class="seg"><div class="name">Families</div><div class="bar"><div class="fill" style="width: 32%"></div></div><div class="v">13%</div></div>
+      <div class="seg"><div class="name">Other</div><div class="bar"><div class="fill" style="width: 15%"></div></div><div class="v">6%</div></div>
+      <div style="margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line);">
+        <div style="font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px;">Top regions by conversions</div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <span class="pill blue">Kuala Lumpur · 38%</span>
+          <span class="pill blue">Singapore · 24%</span>
+          <span class="pill blue">Penang · 11%</span>
+          <span class="pill blue">Bangkok · 9%</span>
+          <span class="pill blue">Johor Bahru · 7%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FUNNEL -->
+  <div class="section-title">Conversion funnel</div>
+  <div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px;">
+      <p class="sub" style="margin: 0;">Stage-to-stage drop-off across the user journey, in-app only.</p>
+      <span class="pill green">End-to-end conversion: 0.068%</span>
+    </div>
+    <div class="funnel">
+      <div class="stage"><div class="name">Impressions served</div><div class="bar"><div class="fill" style="width: 100%"></div></div><div class="num">12,420,000</div><div class="pct">100.0%</div></div>
+      <div class="stage"><div class="name">Engaged views (≥1s)</div><div class="bar"><div class="fill" style="width: 68%"></div></div><div class="num">8,445,600</div><div class="pct">68.0%</div></div>
+      <div class="stage"><div class="name">Clicks</div><div class="bar"><div class="fill" style="width: 3.2%"></div></div><div class="num">395,000</div><div class="pct">3.18%</div></div>
+      <div class="stage"><div class="name">Landing-page reached</div><div class="bar"><div class="fill" style="width: 2.9%"></div></div><div class="num">358,000</div><div class="pct">2.88%</div></div>
+      <div class="stage"><div class="name">Search initiated</div><div class="bar"><div class="fill" style="width: 1.6%"></div></div><div class="num">198,400</div><div class="pct">1.60%</div></div>
+      <div class="stage"><div class="name">Add to cart / hold seat</div><div class="bar"><div class="fill" style="width: 0.18%"></div></div><div class="num">22,300</div><div class="pct">0.18%</div></div>
+      <div class="stage"><div class="name">Booking confirmed (in-app)</div><div class="bar"><div class="fill" style="width: 0.068%"></div></div><div class="num">8,420</div><div class="pct">0.068%</div></div>
+    </div>
+  </div>
+
+  <!-- ENGAGEMENT + HEATMAP -->
+  <div class="grid grid-2-eq" style="margin-top: 14px;">
+    <div class="card">
+      <h2>Placement engagement signals</h2>
+      <p class="sub">Where users actually look, tap, and pause on the hero carousel.</p>
+      <div class="heatmap">
+        <div class="phone">
+          <div class="status-bar"></div>
+          <div class="nav">aeon360 · home</div>
+          <div class="placement">
+            BALI SALE
+            <div class="heat-blob heat-1"></div>
+            <div class="heat-blob heat-2"></div>
+            <div class="heat-blob heat-3"></div>
+          </div>
+          <div class="row"><div class="tile"></div><div class="tile"></div><div class="tile"></div></div>
+          <div class="lines"><div></div><div></div><div></div></div>
+          <div class="row"><div class="tile"></div><div class="tile"></div></div>
+        </div>
+      </div>
+      <table style="margin-top: 14px;">
+        <tr><td>Avg time on creative</td><td class="num">2.34s</td><td class="num"><span class="pill green">+38% vs avg</span></td></tr>
+        <tr><td>Hover-to-click ratio</td><td class="num">11.2%</td><td class="num"><span class="pill green">Strong intent</span></td></tr>
+        <tr><td>Scroll past without engagement</td><td class="num">18.4%</td><td class="num"><span class="pill green">Below 25% threshold</span></td></tr>
+        <tr><td>CTA tap zone share of clicks</td><td class="num">61%</td><td class="num"><span class="pill amber">Tap-zone narrow</span></td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h2>Top creative · A/B comparison</h2>
+      <p class="sub">Two creative variants ran in parallel rotation. Variant A is recommended for the final week.</p>
+      <div class="compare">
+        <div class="creative-row">
+          <div class="swatch" style="background: linear-gradient(135deg, #102045, #1d4ed8);">VARIANT A</div>
+          <div class="stats">
+            <div><div class="l">CTR</div><div class="v">3.62%</div></div>
+            <div><div class="l">Conv. rate</div><div class="v">2.41%</div></div>
+            <div><div class="l">Avg attention</div><div class="v">2.7s</div></div>
+            <div><div class="l">ROAS</div><div class="v">7.1×</div></div>
+          </div>
+          <div style="margin-top: 8px;"><span class="pill green">Winner · +38% CTR</span></div>
+        </div>
+        <div class="creative-row">
+          <div class="swatch" style="background: linear-gradient(135deg, #6b7488, #9aa1b3);">VARIANT B</div>
+          <div class="stats">
+            <div><div class="l">CTR</div><div class="v">2.62%</div></div>
+            <div><div class="l">Conv. rate</div><div class="v">1.78%</div></div>
+            <div><div class="l">Avg attention</div><div class="v">1.9s</div></div>
+            <div><div class="l">ROAS</div><div class="v">4.9×</div></div>
+          </div>
+          <div style="margin-top: 8px;"><span class="pill gray">Underperformer</span></div>
+        </div>
+      </div>
+      <div class="insight win" style="margin-top: 12px;">
+        <div class="icon">💡</div>
+        <div>
+          <h3>Recommendation</h3>
+          <p>Pause Variant B and rotate 100% of remaining impressions to Variant A. Projected lift on remaining $6.8K spend: <b>+520 incremental bookings</b>, +$74K revenue.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REPLAYS -->
+  <div class="section-title">Session replay highlights</div>
+  <div class="card">
+    <p class="sub" style="margin-top: 0;">Three representative session clips. Click any clip to view the full replay in the brand portal.</p>
+    <div class="grid grid-3" style="margin-top: 8px;">
+      <div class="clip">
+        <div class="thumb"></div>
+        <div class="body">
+          <h3>Successful booking · 47s</h3>
+          <p>User saw hero, tapped CTA at 3s, completed booking flow without friction. Cohort: returning user, KL.</p>
+          <div class="stat">Pattern matched: <span class="pill green">High-intent · 64% of converters</span></div>
+        </div>
+      </div>
+      <div class="clip">
+        <div class="thumb warn"></div>
+        <div class="body">
+          <h3>Friction at date picker · 1m 22s</h3>
+          <p>User reached search, abandoned during date selection. Calendar UI tap-rage detected (5 rapid taps on inactive area).</p>
+          <div class="stat">Affects: <span class="pill amber">~9.4% of click-throughs</span></div>
+        </div>
+      </div>
+      <div class="clip">
+        <div class="thumb"></div>
+        <div class="body">
+          <h3>Comparison shopper · 2m 14s</h3>
+          <p>User toggled between Bali variant and a competing destination tile twice before booking. Strong consideration signal.</p>
+          <div class="stat">Pattern matched: <span class="pill blue">Cross-shop · 22% of viewers</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OFF-SITE + LTV -->
+  <div class="grid grid-2-eq" style="margin-top: 14px;">
+    <div class="card">
+      <h2>Off-site booking attribution</h2>
+      <p class="sub">In-app click → confirmed booking on Pacific Airways' own site, 7-day post-click window.</p>
+      <div class="chart-sm"><canvas id="offsiteChart"></canvas></div>
+      <table style="margin-top: 10px;">
+        <tr><td>Click-through bookings (off-site)</td><td class="num">3,180</td></tr>
+        <tr><td>View-through bookings (off-site)</td><td class="num">1,940</td></tr>
+        <tr><td>Total off-site bookings attributed</td><td class="num"><b>5,120</b></td></tr>
+        <tr><td>Combined ROAS (in-app + off-site)</td><td class="num"><b>9.4×</b></td></tr>
+      </table>
+      <div class="insight" style="margin-top: 10px;">
+        <div class="icon">🔗</div>
+        <div>
+          <h3>Data-share status</h3>
+          <p>Pacific Airways' server-side conversion API connected via Aeon360 partnership. Off-site coverage: <b>87%</b> of booking events captured.</p>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Long-term value indicators</h2>
+      <p class="sub">User behavior 30 days after the click — not part of campaign ROAS but indicative of brand lift.</p>
+      <table>
+        <tr><td>30-day repeat search rate</td><td class="num">22.4%</td><td class="num"><span class="pill green">+8pp vs control</span></td></tr>
+        <tr><td>Pacific Airways brand recall (in-app survey)</td><td class="num">61%</td><td class="num"><span class="pill green">+19pp</span></td></tr>
+        <tr><td>Add-to-favorites rate</td><td class="num">3.8%</td><td class="num"><span class="pill green">+2.1pp</span></td></tr>
+        <tr><td>Cross-product engagement (e.g. hotels)</td><td class="num">14.6%</td><td class="num"><span class="pill blue">Halo effect</span></td></tr>
+        <tr><td>Eon Credit application rate (cohort)</td><td class="num">1.4%</td><td class="num"><span class="pill blue">Cross-sell signal</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- AI INSIGHTS -->
+  <div class="section-title">AI-generated insights & recommendations</div>
+  <div class="card">
+    <p class="sub" style="margin-top: 0;">Generated by ContentSquare's analytics copilot from this campaign's data. Three actions ranked by projected revenue impact.</p>
+
+    <div class="insight win">
+      <div class="icon">🚀</div>
+      <div>
+        <h3>1. Concentrate remaining spend on Variant A in evening hours (6–10 PM MYT)</h3>
+        <p>Variant A's CTR rises to 4.8% in this window — 1.5× the day-average. Combined with KL/SG geos, projected incremental bookings: <b>~640</b>, projected incremental revenue: <b>~$92K</b>.</p>
+      </div>
+    </div>
+
+    <div class="insight warn">
+      <div class="icon">⚠️</div>
+      <div>
+        <h3>2. Fix the date-picker friction in the Pacific Airways booking flow</h3>
+        <p>9.4% of click-throughs abandon within the calendar UI (tap-rage signal detected). A fix sized at one engineering sprint would project a <b>+11% conversion-rate uplift</b>, equivalent to ~920 additional bookings annualized at current pacing.</p>
+      </div>
+    </div>
+
+    <div class="insight">
+      <div class="icon">📈</div>
+      <div>
+        <h3>3. Test a "Bali + KL hotel" bundle creative for the cross-shop cohort</h3>
+        <p>22% of viewers cross-shopped between Bali and other destinations. A bundle creative leveraging Aeon360's hotel inventory could capture this hesitation. Estimated cost-to-test: <b>$4K</b> over 7 days.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div>
+      <div><b>Aeon360 Commerce Media · Brand Self-Serve Report</b></div>
+      <div style="margin-top: 4px;">Confidential · For Pacific Airways internal use only · Powered by ContentSquare</div>
+    </div>
+    <div style="text-align: right;">
+      <div>Report ID: AEON-PA-BALI-2026-MAY</div>
+      <div style="margin-top: 4px;">Next refresh: 2026-05-09 09:00 MYT · Questions: hasif@aeon360.my</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const palette = { brand: '#b3122a', accent: '#1d4ed8', muted: '#6b7488', line: '#e5e8ef' };
+Chart.defaults.color = palette.muted;
+Chart.defaults.borderColor = palette.line;
+Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, Inter, "Segoe UI", system-ui, sans-serif';
+
+new Chart(document.getElementById('dailyChart'), {
+  type: 'line',
+  data: {
+    labels: ['Apr 15','Apr 17','Apr 19','Apr 21','Apr 23','Apr 25','Apr 27','Apr 29','May 1','May 3','May 5','May 7'],
+    datasets: [
+      { label: 'Impressions (000s)', data: [820,910,1020,1140,1080,1180,1240,1310,1280,1390,1410,1340], borderColor: palette.accent, backgroundColor: 'rgba(29,78,216,0.10)', tension: 0.32, fill: true, borderWidth: 2, yAxisID: 'y' },
+      { label: 'Clicks (000s)', data: [22,28,31,34,33,38,40,43,42,46,48,45], borderColor: palette.brand, backgroundColor: 'rgba(179,18,42,0.0)', tension: 0.32, fill: false, borderWidth: 2, yAxisID: 'y1' }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } } },
+    scales: {
+      y: { position: 'left', grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { callback: v => v + 'K' }, title: { display: true, text: 'Impressions', font: { size: 10 } } },
+      y1: { position: 'right', grid: { display: false }, ticks: { callback: v => v + 'K' }, title: { display: true, text: 'Clicks', font: { size: 10 } } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+new Chart(document.getElementById('offsiteChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['In-app bookings', 'Off-site click-through', 'Off-site view-through'],
+    datasets: [{
+      data: [8420, 3180, 1940],
+      backgroundColor: ['#1d4ed8', '#b3122a', '#ffb86b'],
+      borderWidth: 0
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false, cutout: '62%',
+    plugins: { legend: { position: 'right', labels: { boxWidth: 10, font: { size: 11 } } } }
+  }
+});
+</script>
+</body>
+</html>
