@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Aeon360 Campaign Report — Pacific Airways · MCP Data Only</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #f7f8fb;
+    --panel: #ffffff;
+    --ink: #0e1726;
+    --ink-2: #2a3346;
+    --muted: #6b7488;
+    --line: #e5e8ef;
+    --line-2: #eef0f5;
+    --brand: #b3122a;
+    --brand-soft: #fde7eb;
+    --accent: #1d4ed8;
+    --accent-soft: #e6edff;
+    --good: #117a4f;
+    --good-soft: #dcf3e6;
+    --warn: #a55a00;
+    --warn-soft: #fde9cf;
+    --mcp: #0c8e6f;
+    --mcp-soft: #d6f1e9;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 28px 24px 80px; }
+
+  .topbar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 14px; border-bottom: 1px solid var(--line); margin-bottom: 22px; }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-mark { width: 32px; height: 32px; border-radius: 8px; background: var(--brand); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; letter-spacing: -0.02em; font-size: 14px; }
+  .logo-name { font-weight: 700; font-size: 16px; letter-spacing: -0.01em; }
+  .logo-name span { color: var(--muted); font-weight: 500; margin-left: 6px; font-size: 12px; }
+  .powered { font-size: 11px; color: var(--muted); }
+  .powered b { color: var(--ink-2); }
+  .nav-pill { display: inline-flex; gap: 6px; align-items: center; font-size: 12px; color: var(--muted); background: var(--panel); padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); text-decoration: none; margin-right: 8px; }
+
+  /* Banner explaining the MCP constraint */
+  .mcp-banner { background: linear-gradient(135deg, var(--mcp-soft) 0%, #ecf8f4 100%); border: 1px solid #b9e3d5; border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; display: flex; gap: 14px; align-items: flex-start; }
+  .mcp-banner .icon { width: 32px; height: 32px; border-radius: 8px; background: var(--mcp); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; font-weight: 700; }
+  .mcp-banner h3 { font-size: 13px; margin: 0 0 4px; color: var(--mcp); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; }
+  .mcp-banner p { font-size: 13px; margin: 0; color: var(--ink-2); line-height: 1.5; }
+  .mcp-banner p b { color: var(--ink); }
+
+  /* MCP source pill on each section */
+  .mcp-tag { display: inline-flex; align-items: center; gap: 5px; background: var(--mcp-soft); color: var(--mcp); padding: 3px 9px; border-radius: 999px; font-size: 10px; font-weight: 600; font-family: ui-monospace, "SF Mono", Menlo, monospace; letter-spacing: 0.02em; }
+  .mcp-tag::before { content: '⊕'; font-size: 12px; }
+  .section-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .section-head h2 { font-size: 16px; margin: 0; font-weight: 700; }
+
+  /* Hero */
+  .hero { background: linear-gradient(135deg, #ffffff 0%, #fbfafd 100%); border: 1px solid var(--line); border-radius: 16px; padding: 22px 24px; margin-bottom: 18px; display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; }
+  .hero h1 { font-size: 24px; font-weight: 700; margin: 6px 0 4px; letter-spacing: -0.01em; }
+  .hero .crumb { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.14em; }
+  .hero .meta { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; margin-top: 14px; font-size: 13px; }
+  .hero .meta .l { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; }
+  .hero .meta .v { color: var(--ink); font-weight: 600; margin-top: 2px; }
+  .status { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: var(--good-soft); color: var(--good); border-radius: 999px; font-size: 11px; font-weight: 600; }
+  .status .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--good); }
+  .creative-card { background: linear-gradient(135deg, #102045 0%, #1d4ed8 100%); border-radius: 12px; padding: 20px; color: #fff; display: flex; flex-direction: column; justify-content: space-between; min-height: 200px; position: relative; overflow: hidden; }
+  .creative-card::before { content: ''; position: absolute; right: -50px; top: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(255,255,255,0.18), transparent 60%); border-radius: 50%; }
+  .creative-card .tag { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.85; }
+  .creative-card .title { font-size: 22px; font-weight: 700; margin-top: 4px; line-height: 1.15; }
+  .creative-card .price { font-size: 14px; opacity: 0.85; margin-top: 6px; }
+  .creative-card .cta { background: #fff; color: #102045; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; align-self: flex-start; margin-top: 14px; }
+
+  /* KPI strip */
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 18px; }
+  .kpi { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  .kpi .head { display: flex; justify-content: space-between; align-items: flex-start; }
+  .kpi .l { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  .kpi .v { font-size: 26px; font-weight: 700; margin-top: 6px; letter-spacing: -0.01em; }
+  .kpi .delta { font-size: 12px; margin-top: 4px; display: flex; align-items: center; gap: 4px; }
+  .kpi .delta.up { color: var(--good); }
+  .kpi .bench { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .section-title { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.18em; margin: 22px 0 10px; }
+  .grid { display: grid; gap: 14px; }
+  .grid-2 { grid-template-columns: 2fr 1fr; }
+  .grid-2-eq { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 980px) { .hero, .kpis, .grid-2, .grid-2-eq, .grid-3 { grid-template-columns: 1fr; } }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+  .card h2 { font-size: 16px; margin: 0 0 4px; font-weight: 700; }
+  .card p.sub { color: var(--muted); font-size: 12px; margin: 8px 0 12px; }
+
+  /* Funnel */
+  .funnel { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+  .stage { display: grid; grid-template-columns: 200px 1fr 110px 70px; gap: 12px; align-items: center; font-size: 13px; }
+  .stage .name { color: var(--ink-2); font-weight: 500; }
+  .stage .bar { height: 22px; background: var(--line-2); border-radius: 6px; overflow: hidden; }
+  .stage .fill { height: 100%; background: linear-gradient(90deg, var(--accent), #3b82f6); border-radius: 6px; }
+  .stage .num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .stage .pct { text-align: right; color: var(--muted); font-size: 12px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line-2); }
+  th { color: var(--muted); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tr:last-child td { border-bottom: none; }
+
+  .insight { display: flex; gap: 12px; padding: 12px 14px; background: var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 8px; margin-bottom: 10px; }
+  .insight.warn { background: var(--warn-soft); border-left-color: var(--warn); }
+  .insight.win { background: var(--good-soft); border-left-color: var(--good); }
+  .insight .icon { font-size: 16px; flex-shrink: 0; }
+  .insight h3 { font-size: 13px; margin: 0 0 4px; font-weight: 700; }
+  .insight p { font-size: 12px; margin: 0; color: var(--ink-2); line-height: 1.5; }
+
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+  .pill.green { background: var(--good-soft); color: var(--good); }
+  .pill.blue { background: var(--accent-soft); color: var(--accent); }
+  .pill.amber { background: var(--warn-soft); color: var(--warn); }
+  .pill.red { background: var(--brand-soft); color: var(--brand); }
+  .pill.gray { background: var(--line-2); color: var(--muted); }
+
+  .seg { display: grid; grid-template-columns: 130px 1fr 60px; gap: 10px; align-items: center; margin-bottom: 8px; font-size: 12px; }
+  .seg .name { color: var(--ink-2); }
+  .seg .bar { height: 8px; background: var(--line-2); border-radius: 4px; overflow: hidden; }
+  .seg .fill { height: 100%; background: var(--brand); border-radius: 4px; }
+  .seg .v { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--ink); }
+
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .creative-row { padding: 12px; border: 1px solid var(--line); border-radius: 10px; }
+  .creative-row .swatch { height: 80px; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 13px; letter-spacing: 0.04em; }
+  .creative-row .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 12px; }
+  .creative-row .stats .l { color: var(--muted); font-size: 11px; }
+  .creative-row .stats .v { font-weight: 600; }
+
+  /* Cross-platform journey */
+  .journey { display: flex; align-items: stretch; gap: 0; overflow-x: auto; padding: 8px 0; }
+  .j-step { flex: 1; min-width: 120px; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); position: relative; }
+  .j-step.aeon { border-left: 3px solid var(--brand); }
+  .j-step.pa { border-left: 3px solid var(--accent); }
+  .j-step .platform { font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); font-weight: 700; }
+  .j-step .label { font-size: 12px; font-weight: 600; margin-top: 4px; }
+  .j-step .count { font-size: 18px; font-weight: 700; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .j-step .pct { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .j-arrow { display: flex; align-items: center; justify-content: center; padding: 0 4px; color: var(--muted); font-size: 18px; flex-shrink: 0; }
+  .j-platforms { display: flex; gap: 16px; font-size: 11px; margin-bottom: 10px; }
+  .j-platforms .item { display: flex; align-items: center; gap: 6px; color: var(--muted); }
+  .j-platforms .dot { width: 8px; height: 8px; border-radius: 2px; }
+  .j-platforms .dot.aeon { background: var(--brand); }
+  .j-platforms .dot.pa { background: var(--accent); }
+
+  /* Errors blocking conversions */
+  .error-row { display: grid; grid-template-columns: 40px 1fr 110px 110px 110px; gap: 12px; padding: 12px; border-bottom: 1px solid var(--line-2); font-size: 13px; align-items: center; }
+  .error-row:last-child { border-bottom: none; }
+  .error-row .rank { font-size: 18px; font-weight: 700; color: var(--brand); text-align: center; }
+  .error-row .title { font-weight: 600; color: var(--ink); }
+  .error-row .sub { color: var(--muted); font-size: 11px; margin-top: 2px; }
+  .error-row .num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .error-row .num small { color: var(--muted); font-size: 10px; display: block; font-weight: 400; text-transform: uppercase; letter-spacing: 0.08em; }
+  .error-header { display: grid; grid-template-columns: 40px 1fr 110px 110px 110px; gap: 12px; padding: 8px 12px; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 1px solid var(--line); }
+
+  .chart-box { height: 240px; }
+  .chart-sm { height: 180px; }
+
+  /* Data lineage footer */
+  .lineage { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px; margin-top: 28px; }
+  .lineage h2 { font-size: 14px; margin: 0 0 12px; font-weight: 700; }
+  .lineage table { font-size: 12px; }
+  .lineage td { padding: 8px 12px; }
+  .lineage code { background: var(--mcp-soft); color: var(--mcp); padding: 1px 6px; border-radius: 4px; font-size: 11px; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  .lineage tr td:first-child { width: 40%; color: var(--ink-2); }
+  .lineage tr td:last-child { color: var(--muted); }
+
+  /* What's not in this report */
+  .gap-card { background: linear-gradient(135deg, var(--warn-soft) 0%, #fff8ee 100%); border: 1px solid #f4d5a3; border-radius: 12px; padding: 16px 18px; margin-top: 14px; }
+  .gap-card h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; margin: 0 0 8px; color: var(--warn); font-weight: 700; }
+  .gap-card ul { margin: 0; padding-left: 18px; font-size: 13px; color: var(--ink-2); line-height: 1.6; }
+  .gap-card ul li { margin-bottom: 4px; }
+  .gap-card ul li b { color: var(--ink); }
+
+  .footer { color: var(--muted); font-size: 11px; margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 20px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="logo">
+      <div class="logo-mark">A</div>
+      <div class="logo-name">Aeon360 <span>Commerce Media · MCP Demo</span></div>
+    </div>
+    <div style="display: flex; align-items: center;">
+      <a href="../" class="nav-pill">← Full-capability version</a>
+      <div class="powered">Powered by <b>ContentSquare MCP</b></div>
+    </div>
+  </div>
+
+  <!-- MCP CONSTRAINT BANNER -->
+  <div class="mcp-banner">
+    <div class="icon">⊕</div>
+    <div>
+      <h3>What this version is</h3>
+      <p>Every panel below is sourced from a tool currently exposed by the <b>ContentSquare MCP</b>. No session replay, no zoning analysis, no merchandising. Both <b>Aeon360</b> and <b>Pacific Airways</b> are instrumented; their MCPs are queried in parallel and joined on shared user identity to produce the cross-platform journey. Each panel header carries the originating MCP tool. A data-lineage table at the bottom maps every metric to its source.</p>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div>
+      <div class="crumb">Campaign Report · Brand Self-Serve</div>
+      <h1>Pacific Airways · Bali Sale 2026</h1>
+      <span class="status"><span class="dot"></span> Active · 3 days remaining</span>
+      <div class="meta">
+        <div><div class="l">Placement</div><div class="v">Hero Carousel + Travel Sponsored Tile</div></div>
+        <div><div class="l">Period</div><div class="v">Apr 15 – May 11, 2026</div></div>
+        <div><div class="l">Booked Budget</div><div class="v">USD $48,000</div></div>
+        <div><div class="l">Spend to date</div><div class="v">$41,200 <span style="color: var(--muted)">(86%)</span></div></div>
+        <div><div class="l">Audience</div><div class="v">Travel-intent · MY/SG/TH · 22–45</div></div>
+        <div><div class="l">Account Manager</div><div class="v">Hasif Rashid · Aeon360</div></div>
+      </div>
+    </div>
+    <div class="creative-card">
+      <div>
+        <div class="tag">Featured Creative · mapping AEON_HERO_PA_VARIANT_A</div>
+        <div class="title">Bali, your way<br/>From RM 388</div>
+        <div class="price">Direct flights · 7 daily departures</div>
+      </div>
+      <div class="cta">Book now ›</div>
+    </div>
+  </div>
+
+  <!-- KPI STRIP -->
+  <div class="kpis">
+    <div class="kpi">
+      <div class="head"><div class="l">Sessions on placement</div><span class="mcp-tag">computeSiteMetrics</span></div>
+      <div class="v">12.42M</div>
+      <div class="delta up">▲ pacing 104% of plan</div>
+      <div class="bench">Goal: 11.95M</div>
+    </div>
+    <div class="kpi">
+      <div class="head"><div class="l">CTA mapping CTR</div><span class="mcp-tag">computeImpact</span></div>
+      <div class="v">3.18%</div>
+      <div class="delta up">▲ 1.4× category benchmark</div>
+      <div class="bench">SEA travel benchmark: 2.20%</div>
+    </div>
+    <div class="kpi">
+      <div class="head"><div class="l">In-app goal completions</div><span class="mcp-tag">computeFunnel</span></div>
+      <div class="v">8,420</div>
+      <div class="delta up">▲ 31% vs prior campaign</div>
+      <div class="bench">Booking funnel · Aeon360 side</div>
+    </div>
+    <div class="kpi">
+      <div class="head"><div class="l">Estimated ROAS</div><span class="mcp-tag">derived</span></div>
+      <div class="v">6.2×</div>
+      <div class="delta up">▲ above 4.5× goal</div>
+      <div class="bench">Goal completions × avg booking ÷ spend</div>
+    </div>
+  </div>
+
+  <!-- DAILY + AUDIENCE -->
+  <div class="grid grid-2">
+    <div class="card">
+      <div class="section-head">
+        <h2>Daily performance</h2>
+        <span class="mcp-tag">computeSiteMetrics · daily granularity</span>
+      </div>
+      <p class="sub">Sessions on the placement-bearing page and CTA mapping hits, daily.</p>
+      <div class="chart-box"><canvas id="dailyChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="section-head">
+        <h2>Audience cohorts</h2>
+        <span class="mcp-tag">searchSegments + computePageGroupMetrics</span>
+      </div>
+      <p class="sub">Share of CTA hits by saved segment.</p>
+      <div class="seg"><div class="name">Frequent flyers</div><div class="bar"><div class="fill" style="width: 84%"></div></div><div class="v">34%</div></div>
+      <div class="seg"><div class="name">Young professionals</div><div class="bar"><div class="fill" style="width: 70%"></div></div><div class="v">28%</div></div>
+      <div class="seg"><div class="name">Couples / honeymoon</div><div class="bar"><div class="fill" style="width: 47%"></div></div><div class="v">19%</div></div>
+      <div class="seg"><div class="name">Families</div><div class="bar"><div class="fill" style="width: 32%"></div></div><div class="v">13%</div></div>
+      <div class="seg"><div class="name">Other</div><div class="bar"><div class="fill" style="width: 15%"></div></div><div class="v">6%</div></div>
+      <div style="margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line);">
+        <div style="font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px;">Top regions by goal completion</div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <span class="pill blue">Kuala Lumpur · 38%</span>
+          <span class="pill blue">Singapore · 24%</span>
+          <span class="pill blue">Penang · 11%</span>
+          <span class="pill blue">Bangkok · 9%</span>
+          <span class="pill blue">Johor Bahru · 7%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AEON FUNNEL -->
+  <div class="card" style="margin-top: 14px;">
+    <div class="section-head">
+      <h2>Conversion funnel · Aeon360 side</h2>
+      <span class="mcp-tag">computeFunnel · 7 stages, 27-day window</span>
+    </div>
+    <p class="sub">Stage-to-stage drop-off across the in-app journey to booking confirmation.</p>
+    <div class="funnel">
+      <div class="stage"><div class="name">Sessions seeing placement</div><div class="bar"><div class="fill" style="width: 100%"></div></div><div class="num">12,420,000</div><div class="pct">100.0%</div></div>
+      <div class="stage"><div class="name">Engaged sessions (≥1 interaction)</div><div class="bar"><div class="fill" style="width: 68%"></div></div><div class="num">8,445,600</div><div class="pct">68.0%</div></div>
+      <div class="stage"><div class="name">CTA mapping triggered</div><div class="bar"><div class="fill" style="width: 3.2%"></div></div><div class="num">395,000</div><div class="pct">3.18%</div></div>
+      <div class="stage"><div class="name">Landing page reached</div><div class="bar"><div class="fill" style="width: 2.9%"></div></div><div class="num">358,000</div><div class="pct">2.88%</div></div>
+      <div class="stage"><div class="name">Search initiated</div><div class="bar"><div class="fill" style="width: 1.6%"></div></div><div class="num">198,400</div><div class="pct">1.60%</div></div>
+      <div class="stage"><div class="name">Add to cart / hold seat</div><div class="bar"><div class="fill" style="width: 0.18%"></div></div><div class="num">22,300</div><div class="pct">0.18%</div></div>
+      <div class="stage"><div class="name">Booking confirmed (in-app)</div><div class="bar"><div class="fill" style="width: 0.068%"></div></div><div class="num">8,420</div><div class="pct">0.068%</div></div>
+    </div>
+  </div>
+
+  <!-- CROSS-PLATFORM JOURNEY (new, MCP-sourced) -->
+  <div class="card" style="margin-top: 14px;">
+    <div class="section-head">
+      <h2>Cross-platform user journey</h2>
+      <span class="mcp-tag">computeJourney × 2 · Aeon360 + Pacific Airways MCP</span>
+    </div>
+    <p class="sub">Sequential journey reconstructed by querying each platform's MCP for the same user cohort and joining on shared user identity. Replaces what would have been a session-replay narrative with a quantified path view.</p>
+    <div class="j-platforms">
+      <div class="item"><span class="dot aeon"></span> Aeon360 (sessions)</div>
+      <div class="item"><span class="dot pa"></span> Pacific Airways (sessions)</div>
+    </div>
+    <div class="journey">
+      <div class="j-step aeon"><div class="platform">Aeon360</div><div class="label">Home · placement view</div><div class="count">12.42M</div><div class="pct">100%</div></div>
+      <div class="j-arrow">→</div>
+      <div class="j-step aeon"><div class="platform">Aeon360</div><div class="label">Landing tap</div><div class="count">395K</div><div class="pct">3.18%</div></div>
+      <div class="j-arrow">⇒</div>
+      <div class="j-step pa"><div class="platform">Pacific Airways</div><div class="label">App opened</div><div class="count">358K</div><div class="pct">2.88%</div></div>
+      <div class="j-arrow">→</div>
+      <div class="j-step pa"><div class="platform">Pacific Airways</div><div class="label">Search · Bali</div><div class="count">198K</div><div class="pct">1.60%</div></div>
+      <div class="j-arrow">→</div>
+      <div class="j-step pa"><div class="platform">Pacific Airways</div><div class="label">Checkout</div><div class="count">22.3K</div><div class="pct">0.18%</div></div>
+      <div class="j-arrow">→</div>
+      <div class="j-step pa"><div class="platform">Pacific Airways</div><div class="label">Booking confirmed</div><div class="count">13.5K</div><div class="pct">0.109%</div></div>
+    </div>
+    <div class="insight" style="margin-top: 14px;">
+      <div class="icon">↔</div>
+      <div>
+        <h3>The handoff is clean</h3>
+        <p>91% of users who tap the landing on Aeon360 open the Pacific Airways app within 60 seconds. The journey is stitched in CS because the same user identity is shared across both properties — no client-side cookie reliance.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOP CONVERSION BLOCKERS (replaces session replay clips) -->
+  <div class="card" style="margin-top: 14px;">
+    <div class="section-head">
+      <h2>Top errors blocking conversions · Pacific Airways app</h2>
+      <span class="mcp-tag">getTopErrorsByImpactOnGoal · goal=Booking confirmed</span>
+    </div>
+    <p class="sub">Errors and friction patterns on the Pacific Airways side that demonstrably cost conversions, ranked by impact on the booking goal. Replaces the "session replay clip" view with a quantified blocker list.</p>
+    <div class="error-header">
+      <div></div>
+      <div>Error · page group</div>
+      <div style="text-align: right;">Sessions affected</div>
+      <div style="text-align: right;">Goal impact</div>
+      <div style="text-align: right;">Lost revenue (est.)</div>
+    </div>
+    <div class="error-row">
+      <div class="rank">1</div>
+      <div>
+        <div class="title">JS error · date picker calendar component</div>
+        <div class="sub">Page group: Search · Date Selection · iOS 17.x, Android Chrome 124+</div>
+      </div>
+      <div class="num">37,140 <small>9.4% of sessions</small></div>
+      <div class="num">−920 <small>conversions lost</small></div>
+      <div class="num">−$132K <small>annualized</small></div>
+    </div>
+    <div class="error-row">
+      <div class="rank">2</div>
+      <div>
+        <div class="title">Payment iframe load timeout (&gt;6s)</div>
+        <div class="sub">Page group: Checkout · Payment · all platforms</div>
+      </div>
+      <div class="num">14,890 <small>3.8% of sessions</small></div>
+      <div class="num">−340 <small>conversions lost</small></div>
+      <div class="num">−$49K <small>annualized</small></div>
+    </div>
+    <div class="error-row">
+      <div class="rank">3</div>
+      <div>
+        <div class="title">"Continue" button non-responsive on price change</div>
+        <div class="sub">Page group: Search · Results · race condition with re-pricing call</div>
+      </div>
+      <div class="num">8,420 <small>2.1% of sessions</small></div>
+      <div class="num">−180 <small>conversions lost</small></div>
+      <div class="num">−$26K <small>annualized</small></div>
+    </div>
+  </div>
+
+  <!-- CREATIVE A/B (kept, but MCP-sourced only) -->
+  <div class="card" style="margin-top: 14px;">
+    <div class="section-head">
+      <h2>Creative variant comparison</h2>
+      <span class="mcp-tag">searchMappings + computePageGroupMetrics per mapping</span>
+    </div>
+    <p class="sub">Variants A and B were instrumented as distinct mappings. All metrics derive from per-mapping page metrics — no zoning or replay needed.</p>
+    <div class="compare">
+      <div class="creative-row">
+        <div class="swatch" style="background: linear-gradient(135deg, #102045, #1d4ed8);">VARIANT A · AEON_HERO_PA_A</div>
+        <div class="stats">
+          <div><div class="l">Sessions</div><div class="v">6.20M</div></div>
+          <div><div class="l">CTA hit rate</div><div class="v">3.62%</div></div>
+          <div><div class="l">Goal conv.</div><div class="v">2.41%</div></div>
+          <div><div class="l">ROAS</div><div class="v">7.1×</div></div>
+        </div>
+        <div style="margin-top: 8px;"><span class="pill green">Winner · +38% CTA hit rate</span></div>
+      </div>
+      <div class="creative-row">
+        <div class="swatch" style="background: linear-gradient(135deg, #6b7488, #9aa1b3);">VARIANT B · AEON_HERO_PA_B</div>
+        <div class="stats">
+          <div><div class="l">Sessions</div><div class="v">6.22M</div></div>
+          <div><div class="l">CTA hit rate</div><div class="v">2.62%</div></div>
+          <div><div class="l">Goal conv.</div><div class="v">1.78%</div></div>
+          <div><div class="l">ROAS</div><div class="v">4.9×</div></div>
+        </div>
+        <div style="margin-top: 8px;"><span class="pill gray">Underperformer</span></div>
+      </div>
+    </div>
+    <div class="gap-card" style="margin-top: 14px;">
+      <h3>⚠ Not available via MCP today</h3>
+      <ul>
+        <li><b>Attention metrics</b> (avg time on creative, hover patterns) — require Zoning Analysis</li>
+        <li><b>Tap-zone heatmap</b> showing where users actually click on the creative — Zoning</li>
+        <li><b>Replay clips</b> showing how high-converters vs abandoners behaved — Session Replay</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- OFF-SITE + LTV -->
+  <div class="grid grid-2-eq" style="margin-top: 14px;">
+    <div class="card">
+      <div class="section-head">
+        <h2>Off-site goal attribution</h2>
+        <span class="mcp-tag">computeFunnel · Pacific Airways project</span>
+      </div>
+      <p class="sub">Bookings confirmed on Pacific Airways' own properties, attributed via shared user identity to the originating Aeon360 placement.</p>
+      <div class="chart-sm"><canvas id="offsiteChart"></canvas></div>
+      <table style="margin-top: 10px;">
+        <tr><td>Confirmed bookings (PA web + app)</td><td class="num">5,120</td></tr>
+        <tr><td>+ In-app bookings (Aeon360 path)</td><td class="num">8,420</td></tr>
+        <tr><td>Total attributed conversions</td><td class="num"><b>13,540</b></td></tr>
+        <tr><td>Combined ROAS</td><td class="num"><b>9.4×</b></td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="section-head">
+        <h2>Returning-user signals</h2>
+        <span class="mcp-tag">computeSiteMetrics · returning sessions, 30d</span>
+      </div>
+      <p class="sub">Repeat behavior on each property 30 days after the campaign click.</p>
+      <table>
+        <tr><td>Repeat sessions on Pacific Airways (30d)</td><td class="num">22.4%</td><td class="num"><span class="pill green">+8pp vs control</span></td></tr>
+        <tr><td>Repeat search · Bali / Indonesia</td><td class="num">14.6%</td><td class="num"><span class="pill green">Halo effect</span></td></tr>
+        <tr><td>Cross-product page views on Aeon360 (Hotels)</td><td class="num">14.6%</td><td class="num"><span class="pill blue">Cross-sell signal</span></td></tr>
+        <tr><td>Eon Credit application-page hits (cohort)</td><td class="num">1.4%</td><td class="num"><span class="pill blue">Internal cross-sell</span></td></tr>
+      </table>
+      <div class="gap-card" style="margin-top: 14px;">
+        <h3>⚠ Not derivable via MCP today</h3>
+        <ul>
+          <li><b>Survey-based brand recall</b> — needs the Surveys product, not in MCP</li>
+          <li><b>Predictive LTV</b> per cohort — needs warehouse export + modeling</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMPACT ANALYSIS (replaces AI insights) -->
+  <div class="card" style="margin-top: 14px;">
+    <div class="section-head">
+      <h2>Impact analysis · projected revenue lift</h2>
+      <span class="mcp-tag">computeImpact + recommendSegments</span>
+    </div>
+    <p class="sub" style="margin-top: 0;">Predictions computed by running the impact-analysis tool against each candidate intervention. Each row pairs a quantified opportunity with the MCP call that produced it.</p>
+
+    <div class="insight win">
+      <div class="icon">🚀</div>
+      <div>
+        <h3>1. Reallocate remaining $6.8K spend to Variant A in 6–10 PM MYT window</h3>
+        <p>Variant A's CTA hit rate rises to 4.8% in this window (<code>computeSiteMetrics</code> with hourly breakdown). Impact analysis projects <b>+520 conversions</b>, <b>+$74K revenue</b>. Source: <code>computeImpact</code> · scenario=time-window shift.</p>
+      </div>
+    </div>
+
+    <div class="insight warn">
+      <div class="icon">⚠️</div>
+      <div>
+        <h3>2. Fix the date-picker JS error on Pacific Airways</h3>
+        <p>Top conversion blocker, affecting 9.4% of sessions. Resolving it would lift booking conversion by an estimated <b>+11%</b> = <b>~920 incremental bookings annualized</b>, <b>+$132K revenue</b>. Source: <code>getTopErrorsByImpactOnGoal</code> + <code>computeImpact</code>.</p>
+      </div>
+    </div>
+
+    <div class="insight">
+      <div class="icon">📈</div>
+      <div>
+        <h3>3. Test a "Bali + KL hotel" bundle creative for cross-shop cohort</h3>
+        <p>The recommended-segments tool identifies a cross-shopping cohort (22% of viewers, identified via journey diversity score). A bundle creative could capture this hesitation. Cost-to-test: <b>$4K</b>. Source: <code>recommendSegments</code> + <code>computeJourney</code>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DATA LINEAGE FOOTER -->
+  <div class="lineage">
+    <h2>Data lineage · every metric to its MCP source</h2>
+    <table>
+      <thead>
+        <tr><th>Panel / metric</th><th>MCP tool</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Sessions on placement · daily performance · top regions</td><td><code>computeSiteMetrics</code></td></tr>
+        <tr><td>CTA mapping CTR · variant-level engagement</td><td><code>searchMappings</code> + <code>computePageGroupMetrics</code></td></tr>
+        <tr><td>Conversion funnel · in-app booking journey</td><td><code>computeFunnel</code></td></tr>
+        <tr><td>Cross-platform journey (Aeon360 → Pacific Airways)</td><td><code>computeJourney</code> × 2 (one per project)</td></tr>
+        <tr><td>Off-site booking attribution</td><td><code>computeFunnel</code> on Pacific Airways project, joined on user ID</td></tr>
+        <tr><td>Audience cohort breakdown</td><td><code>searchSegments</code> + <code>computePageGroupMetrics</code> scoped per segment</td></tr>
+        <tr><td>Top errors blocking conversions</td><td><code>getTopErrorsByImpactOnGoal</code> (PA project)</td></tr>
+        <tr><td>Returning-user signals · halo effect</td><td><code>computeSiteMetrics</code> with returning-visitor filter, 30d window</td></tr>
+        <tr><td>Recommended interventions</td><td><code>computeImpact</code> + <code>recommendSegments</code></td></tr>
+        <tr><td>Goal definition discovery</td><td><code>searchGoals</code> + <code>recommendGoals</code></td></tr>
+      </tbody>
+    </table>
+    <div class="gap-card" style="margin-top: 16px;">
+      <h3>What full-product version adds (today out of MCP scope)</h3>
+      <ul>
+        <li><b>Session Replay clips</b> — three curated session videos showing successful, friction-blocked, and comparison-shopping behavior</li>
+        <li><b>Zoning Analysis</b> — heatmap of where users actually look and tap on the creative; attention metrics like time-on-creative and hover-to-click ratio</li>
+        <li><b>Merchandising</b> — product-level breakdown (which Bali destinations/dates converted best inside the creative)</li>
+        <li><b>Surveys</b> — in-app brand recall lift measurement</li>
+      </ul>
+      <p style="margin-top: 10px; font-size: 12px; color: var(--ink-2);">These are visible in the <a href="../" style="color: var(--accent);">full-capability version</a> of this dashboard and are real ContentSquare products — just not yet surfaced through MCP.</p>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div>
+      <div><b>Aeon360 Commerce Media · MCP-Sourced Report</b></div>
+      <div style="margin-top: 4px;">All metrics from CS MCP tools · Two projects queried (Aeon360 + Pacific Airways) · Joined on shared user identity</div>
+    </div>
+    <div style="text-align: right;">
+      <div>Report ID: AEON-PA-BALI-2026-MCP</div>
+      <div style="margin-top: 4px;"><a href="../" style="color: var(--muted)">↗ Full-capability version (with Replay + Zoning)</a></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const palette = { brand: '#b3122a', accent: '#1d4ed8', muted: '#6b7488', line: '#e5e8ef' };
+Chart.defaults.color = palette.muted;
+Chart.defaults.borderColor = palette.line;
+Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, Inter, "Segoe UI", system-ui, sans-serif';
+
+new Chart(document.getElementById('dailyChart'), {
+  type: 'line',
+  data: {
+    labels: ['Apr 15','Apr 17','Apr 19','Apr 21','Apr 23','Apr 25','Apr 27','Apr 29','May 1','May 3','May 5','May 7'],
+    datasets: [
+      { label: 'Sessions on placement (000s)', data: [820,910,1020,1140,1080,1180,1240,1310,1280,1390,1410,1340], borderColor: palette.accent, backgroundColor: 'rgba(29,78,216,0.10)', tension: 0.32, fill: true, borderWidth: 2, yAxisID: 'y' },
+      { label: 'CTA mapping hits (000s)', data: [22,28,31,34,33,38,40,43,42,46,48,45], borderColor: palette.brand, backgroundColor: 'rgba(179,18,42,0.0)', tension: 0.32, fill: false, borderWidth: 2, yAxisID: 'y1' }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } } },
+    scales: {
+      y: { position: 'left', grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { callback: v => v + 'K' }, title: { display: true, text: 'Sessions', font: { size: 10 } } },
+      y1: { position: 'right', grid: { display: false }, ticks: { callback: v => v + 'K' }, title: { display: true, text: 'CTA hits', font: { size: 10 } } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+new Chart(document.getElementById('offsiteChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['In-app (Aeon360)', 'PA web/app (off-site)'],
+    datasets: [{ data: [8420, 5120], backgroundColor: ['#1d4ed8', '#b3122a'], borderWidth: 0 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false, cutout: '62%',
+    plugins: { legend: { position: 'right', labels: { boxWidth: 10, font: { size: 11 } } } }
+  }
+});
+</script>
+</body>
+</html>
