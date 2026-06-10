@@ -194,11 +194,11 @@
 
   <!-- MODULE NAV -->
   <nav class="modnav">
-    <a href="#m1"><span class="n">01</span>Placement performance</a>
-    <a href="#m2"><span class="n">02</span>Audience &amp; activity</a>
-    <a href="#m3"><span class="n">03</span>Cross-surface journeys</a>
-    <a href="#m4"><span class="n">04</span>Partner campaign report</a>
-    <a href="#m5"><span class="n">05</span>Inventory value</a>
+    <a href="#m4"><span class="n">01</span>Partner reports</a>
+    <a href="#m5"><span class="n">02</span>Inventory value</a>
+    <a href="#m1"><span class="n">03</span>Placement performance</a>
+    <a href="#m2"><span class="n">04</span>Audience &amp; activity</a>
+    <a href="#m3"><span class="n">05</span>Cross-surface journeys</a>
     <a href="#m6"><span class="n">06</span>Architecture &amp; data</a>
     <a href="#roadmap"><span class="n">→</span>Roadmap</a>
     <span style="margin-left: auto; align-self: center; background: var(--warn-soft); color: var(--warn); font-size: 10px; font-weight: 800; letter-spacing: 0.12em; padding: 5px 11px; border-radius: 999px;">ILLUSTRATIVE DATA</span>
@@ -243,176 +243,29 @@
 
   <!-- POC SCORECARD -->
   <div class="poc">
-    <h3>POC success criteria · where each one lives in this console</h3>
+    <h3>Your validation checklist · the four metrics the team asked to see</h3>
+    <p style="font-size: 12px; color: var(--ink-2); margin: -4px 0 10px;">Everything a proof-of-concept would set out to demonstrate, shown here on modeled data — so the decision can move straight to production.</p>
     <div class="poc-grid">
-      <div class="poc-item"><b><span class="check">✓</span>Impressions, clicks &amp; CTR per banner</b><span>Every creative and slot measured individually, including carousel position.</span><br/><span class="where">MODULE 01</span></div>
-      <div class="poc-item"><b><span class="check">✓</span>Unique active users per day</b><span>Daily uniques, new vs returning, 30-day trend.</span><br/><span class="where">MODULE 02</span></div>
-      <div class="poc-item"><b><span class="check">✓</span>Active periods</b><span>Hour-by-hour activity profile — when your audience is actually in the app.</span><br/><span class="where">MODULE 02</span></div>
-      <div class="poc-item"><b><span class="check">✓</span>Journey &amp; lingering time per section</b><span>Most-visited placements and time spent per section, across all three surfaces.</span><br/><span class="where">MODULES 02 + 03</span></div>
+      <div class="poc-item"><b><span class="check">✓</span>Impressions, clicks &amp; CTR per banner</b><span>Every creative and slot measured individually, including carousel position.</span><br/><span class="where">MODULE 03</span></div>
+      <div class="poc-item"><b><span class="check">✓</span>Unique active users per day</b><span>Daily uniques, new vs returning, 30-day trend.</span><br/><span class="where">MODULE 04</span></div>
+      <div class="poc-item"><b><span class="check">✓</span>Active periods</b><span>Hour-by-hour activity profile — when your audience is actually in the app.</span><br/><span class="where">MODULE 04</span></div>
+      <div class="poc-item"><b><span class="check">✓</span>Journey &amp; lingering time per section</b><span>Most-visited placements and time spent per section, across all three surfaces.</span><br/><span class="where">MODULES 04 + 05</span></div>
     </div>
   </div>
 
-  <!-- ================= MODULE 1 ================= -->
-  <section class="module" id="m1">
-    <div class="mod-head">
-      <span class="mod-chip">Module 01</span>
-      <h2>Placement performance</h2>
-      <span class="phase-chip p1">PHASE 1 · POC</span>
-    </div>
-    <p class="mod-sub">The core of the POC: impressions, taps and CTR for every monetizable placement — captured automatically the moment the SDK is live, with no tagging plan. Layout type and slot position map straight from the JSON payload your ad component already renders; placement ID and name arrive via the lightweight payload enrichment we discussed.</p>
-
-    <div class="card">
-      <h3>Placements · last 30 days</h3>
-      <table>
-        <thead>
-          <tr><th>Placement</th><th>Surface</th><th class="num">Impressions</th><th class="num">Taps</th><th class="num">CTR</th><th class="num">Trend</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><b>Home Hero Carousel</b> · first page</td><td><span class="cloud-chip c1">CLOUD 1 · WALLET</span></td><td class="num">11,200,000</td><td class="num">245,000</td><td class="num"><b>2.19%</b></td><td class="num"><span class="pill green">▲ +0.3pp</span></td></tr>
-          <tr><td>AEON Retail Hot Deals strip</td><td><span class="cloud-chip c1">CLOUD 1 · WALLET</span></td><td class="num">8,900,000</td><td class="num">142,400</td><td class="num">1.60%</td><td class="num"><span class="pill gray">flat</span></td></tr>
-          <tr><td>Member's Special banner</td><td><span class="cloud-chip c2">CLOUD 2 · MEMBERSHIP</span></td><td class="num">2,900,000</td><td class="num">110,200</td><td class="num"><b>3.80%</b></td><td class="num"><span class="pill green">▲ +0.5pp</span></td></tr>
-          <tr><td>Highlights &amp; member rewards tiles</td><td><span class="cloud-chip c2">CLOUD 2 · MEMBERSHIP</span></td><td class="num">2,600,000</td><td class="num">54,600</td><td class="num">2.10%</td><td class="num"><span class="pill gray">flat</span></td></tr>
-          <tr><td>Super Deals featured tiles</td><td><span class="cloud-chip c3">CLOUD 3 · SUPER DEALS</span></td><td class="num">1,400,000</td><td class="num">64,400</td><td class="num"><b>4.60%</b></td><td class="num"><span class="pill green">▲ +0.7pp</span></td></tr>
-        </tbody>
-      </table>
-      <div class="insight brand">
-        <div class="icon">📍</div>
-        <div>
-          <h4>Depth pays: CTR more than doubles from home to Super Deals</h4>
-          <p>The first-page hero reaches almost every session (89%) — that's your premium-reach product. Deeper placements reach fewer users but at up to ~2× the hero's engagement rate (and nearly 3× the Hot Deals strip) — that's your performance product. Two different rate cards, both measurable from day one.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="grid grid-2w" style="margin-top: 14px;">
-      <div class="card">
-        <h3>Creative leaderboard · top campaigns running now</h3>
-        <p class="sub">Placement, layout and slot come from the ad payload; campaign and advertiser are joined server-side from the Cloud 4 ad portal — nothing extra to expose in the front end. Redemption counts illustrate Phase 2 conversion tracking; the POC itself reports impressions, taps and CTR.</p>
-        <table>
-          <thead>
-            <tr><th>Creative</th><th>Placement</th><th class="num">Impr.</th><th class="num">Taps</th><th class="num">CTR</th><th class="num">Redemptions <span class="phase-chip p2" style="font-size: 9px; padding: 2px 6px;">PHASE 2</span></th></tr>
-          </thead>
-          <tbody>
-            <tr><td><b>MEGA SALE · Home Appliance</b> (Magentara)</td><td>Hero · slot 1</td><td class="num">3.40M</td><td class="num">105.4K</td><td class="num"><b>3.10%</b></td><td class="num">12.4K</td></tr>
-            <tr><td>Setel RM10 voucher</td><td>Super Deals</td><td class="num">412K</td><td class="num">22.7K</td><td class="num"><b>5.51%</b></td><td class="num">8.9K</td></tr>
-            <tr><td>Samsung Galaxy S25 RM4,999</td><td>Super Deals</td><td class="num">386K</td><td class="num">14.3K</td><td class="num">3.70%</td><td class="num">1.1K</td></tr>
-            <tr><td>BananaBro · 5× AEON Points</td><td>Membership · Highlights</td><td class="num">640K</td><td class="num">16.0K</td><td class="num">2.50%</td><td class="num">4.2K receipts</td></tr>
-            <tr><td>Starbucks · 5× AEON Points</td><td>Membership · Highlights</td><td class="num">598K</td><td class="num">13.8K</td><td class="num">2.31%</td><td class="num">3.6K receipts</td></tr>
-            <tr><td>ZUS Coffee · 3× AEON Points</td><td>Membership · Highlights</td><td class="num">565K</td><td class="num">11.9K</td><td class="num">2.11%</td><td class="num">2.9K receipts</td></tr>
-            <tr><td>The Chicken Rice Shop · 5× points</td><td>Membership · Highlights</td><td class="num">512K</td><td class="num">9.7K</td><td class="num">1.89%</td><td class="num">2.1K receipts</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="card">
-        <h3>Carousel slot position · CTR decay</h3>
-        <p class="sub">Mapped automatically from the <span style="font-family: ui-monospace, Menlo, monospace; font-size: 11px; background: var(--line-2); padding: 1px 5px; border-radius: 4px;">sequence</span> field in your ad payload. Slot 1 earns 2.6× the CTR of slot 4 — the basis for position-based pricing.</p>
-        <div class="chart-sm"><canvas id="slotChart"></canvas></div>
-        <div class="insight" style="margin-top: 12px;">
-          <div class="icon">💰</div>
-          <div>
-            <h4>Price slots, not just placements</h4>
-            <p>With per-slot CTR proven, slot 1 justifies a premium tier on the rate card. Today all four slots would be sold blind at the same price.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= MODULE 2 ================= -->
-  <section class="module" id="m2">
-    <div class="mod-head">
-      <span class="mod-chip">Module 02</span>
-      <h2>Audience &amp; activity</h2>
-      <span class="phase-chip p1">PHASE 1 · POC</span>
-    </div>
-    <p class="mod-sub">Who is in the app, when, and where they spend their time. This is the audience story you sell to partners — reach, frequency and attention — and the scheduling intelligence for your own campaign team.</p>
-
-    <div class="grid grid-2w">
-      <div class="card">
-        <h3>Unique active users per day · 30 days</h3>
-        <p class="sub">2.84M unique users across the window · 4.4 sessions per user per month · 82% returning.</p>
-        <div class="chart-box"><canvas id="dauChart"></canvas></div>
-      </div>
-      <div class="card">
-        <h3>Active periods · share of daily activity by hour</h3>
-        <p class="sub">Two clear peaks: lunch (12–2 PM) and evening (8–10 PM). Campaign go-lives and push sends scheduled outside these windows are leaving reach on the table.</p>
-        <div class="chart-box"><canvas id="hourlyChart"></canvas></div>
-      </div>
-    </div>
-
-    <div class="card" style="margin-top: 14px;">
-      <h3>Section engagement · visits and lingering time</h3>
-      <p class="sub">Sessions reaching each section of the app, with average time spent per visit. The bar shows reach; the right column is attention.</p>
-      <div class="seg"><div class="name">Wallet home (first page)</div><div class="bar"><div class="fill" style="width: 100%"></div></div><div class="v">12.6M</div><div class="t">0:38 avg</div></div>
-      <div class="seg"><div class="name">AEON Points · membership</div><div class="bar"><div class="fill" style="width: 24.6%"></div></div><div class="v">3.10M</div><div class="t">1:46 avg</div></div>
-      <div class="seg"><div class="name">Super Deals mini-app</div><div class="bar"><div class="fill" style="width: 9.4%"></div></div><div class="v">1.18M</div><div class="t">2:08 avg</div></div>
-      <div class="seg"><div class="name">Rewards catalog</div><div class="bar"><div class="fill" style="width: 7.1%"></div></div><div class="v">890K</div><div class="t">1:32 avg</div></div>
-      <div class="seg"><div class="name">Transaction history</div><div class="bar"><div class="fill" style="width: 5.5%"></div></div><div class="v">696K</div><div class="t">0:54 avg</div></div>
-      <div class="insight win">
-        <div class="icon">⏱</div>
-        <div>
-          <h4>Super Deals holds attention longest — and it's the least-supplied placement</h4>
-          <p>Users spend 2:08 per visit browsing deals — 3.4× the home page — yet Super Deals carries the smallest ad inventory of the three surfaces. Highest attention, highest CTR (4.6%), most headroom to add placements.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= MODULE 3 ================= -->
-  <section class="module" id="m3">
-    <div class="mod-head">
-      <span class="mod-chip">Module 03</span>
-      <h2>Cross-surface journeys</h2>
-      <span class="phase-chip p1">PHASE 1 · POC</span>
-      <span class="phase-chip p2">CONVERSION STAGES · PHASE 2</span>
-    </div>
-    <p class="mod-sub">One user, one journey — even though the path crosses three vendors' surfaces. Native wallet (Softspace), membership WebView (Hitachi) and the Super Deals PWA (Eber) are stitched on AMP ID, so a vendor boundary never breaks the funnel.</p>
-
-    <div class="card">
-      <h3>The monetization path · hero banner to redemption</h3>
-      <div class="journey">
-        <div class="j-step c1"><div class="platform">Cloud 1 · Wallet</div><div class="label">Hero banner seen</div><div class="count">11.2M</div><div class="pct">100%</div></div>
-        <div class="j-arrow">→</div>
-        <div class="j-step c1"><div class="platform">Cloud 1 · Wallet</div><div class="label">Banner tapped</div><div class="count">245K</div><div class="pct">2.19%</div></div>
-        <div class="j-arrow">⇒</div>
-        <div class="j-step c2"><div class="platform">Cloud 2 · Membership</div><div class="label">Landing reached</div><div class="count">228K</div><div class="pct">93% handoff</div></div>
-        <div class="j-arrow">⇒</div>
-        <div class="j-step c3"><div class="platform">Cloud 3 · Super Deals</div><div class="label">Deal detail viewed</div><div class="count">142K</div><div class="pct">58% of taps</div></div>
-        <div class="j-arrow">→</div>
-        <div class="j-step c3" style="border-style: dashed;"><div class="platform">Cloud 3 · Super Deals <span class="phase-chip p2" style="font-size: 8px; padding: 1px 6px;">P2</span></div><div class="label">Redemption started</div><div class="count">96K</div><div class="pct">39% of taps</div></div>
-        <div class="j-arrow">→</div>
-        <div class="j-step c3" style="border-style: dashed;"><div class="platform">Cloud 3 · Super Deals <span class="phase-chip p2" style="font-size: 8px; padding: 1px 6px;">P2</span></div><div class="label">Redemption completed</div><div class="count">78.4K</div><div class="pct">32% of taps</div></div>
-      </div>
-      <div class="insight">
-        <div class="icon">↔</div>
-        <div>
-          <h4>The WebView handoff is clean — 93% survive the Cloud 1 → Cloud 2 transition</h4>
-          <p>The 7% loss between tap and landing is measurable per OS version and per campaign, so a regression in any vendor's release shows up the same day, not at the end of a campaign when a partner asks why numbers are short.</p>
-        </div>
-      </div>
-      <div class="insight warn">
-        <div class="icon">🕐</div>
-        <div>
-          <h4>Conversions don't stop at the session — +31.2K within 14 days <span class="phase-chip p2" style="font-size: 9px; padding: 2px 6px; vertical-align: middle;">PHASE 2</span></h4>
-          <p>Beyond the 78.4K same-journey redemptions, another 31.2K users exposed to the hero banner completed a redemption within 14 days — a 40% addition your partners never see in a click-only report. Exactly the "converts a few weeks later" case from our discussion: the attribution window follows the campaign duration, not the session.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= MODULE 4 ================= -->
+  <!-- ================= MODULE 01 · PARTNER REPORTS ================= -->
   <section class="module" id="m4">
     <div class="mod-head">
-      <span class="mod-chip">Module 04</span>
-      <h2>Partner campaign report</h2>
+      <span class="mod-chip">Module 01</span>
+      <h2>Partner campaign reports</h2>
       <span class="phase-chip p2">PHASE 2 · CONVERSIONS</span>
     </div>
-    <p class="mod-sub">The artifact that closes media deals: what a tenant sees when they buy a six-month package. Using the example raised on our call — a fashion retailer ("Uniqlo, for the sake of discussion") buying media points to reach AEON members. Click-through is the leading indicator the partner watches weekly; conversion uplift is what renews the contract. Shared via scoped access — the partner sees their campaign, nothing else.</p>
+    <p class="mod-sub">Monetization is the immediate priority, so the console leads with the artifact that closes media deals: what a partner sees when they buy. Three campaign mechanics already running in your app become three sellable report archetypes — each pairs the weekly leading indicator (clicks) with the money metric (conversions and uplift). Shared via scoped access: each partner sees their campaign, nothing else.</p>
 
     <div class="card">
       <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
         <div>
-          <h3 style="font-size: 17px;">UNIQLO · Member Exclusive <span class="pill magenta" style="margin-left: 6px;">6-month media package</span></h3>
+          <h3 style="font-size: 17px;">UNIQLO · Member Exclusive <span class="pill magenta" style="margin-left: 6px;">Archetype 1 · 6-month tenant package</span></h3>
           <p class="sub" style="margin-bottom: 0;">Jan 5 – Jul 5, 2026 · package RM 180,000 in media points · spend to date RM 152,000 (84%) · placements: Hero Carousel + Member's Special</p>
         </div>
         <span class="pill green">Active · on pace</span>
@@ -451,12 +304,53 @@
         </div>
       </div>
     </div>
+
+    <div class="grid grid-2" style="margin-top: 14px;">
+      <div class="card">
+        <h3>BananaBro · 5× AEON Points <span class="pill violet" style="margin-left: 6px;">Archetype 2 · Receipt-based points campaign</span></h3>
+        <p class="sub">For partners with no digital checkout — F&amp;B and FMCG. The receipt flow already in your app (snap → submit → approve) turns offline sales into measurable conversions.</p>
+        <table>
+          <tr><td>Impressions · Membership Highlights</td><td class="num">640K</td></tr>
+          <tr><td>Taps</td><td class="num">16.0K · CTR 2.50%</td></tr>
+          <tr><td>Receipts submitted</td><td class="num">4.2K</td></tr>
+          <tr><td>Receipts approved</td><td class="num"><b>3.8K</b> (90%)</td></tr>
+          <tr><td>New-to-brand share</td><td class="num"><span class="pill green">41%</span></td></tr>
+          <tr><td>Repeat receipt within 30 days</td><td class="num">28%</td></tr>
+          <tr><td>Cost per approved receipt (RM 25K package)</td><td class="num"><b>RM 6.60</b></td></tr>
+        </table>
+        <div class="insight win" style="margin-top: 10px;">
+          <div class="icon">🧾</div>
+          <div>
+            <h4>41% new-to-brand is the line that sells the renewal</h4>
+            <p>It reframes the campaign as customer acquisition, not a points subsidy — the difference between a partner repeating at the same budget and upgrading the package.</p>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Setel · RM10 voucher <span class="pill violet" style="margin-left: 6px;">Archetype 3 · Voucher drop</span></h3>
+        <p class="sub">Short-cycle deal placements in Super Deals — high intent, fast feedback. Conversion is the redemption plus actual voucher use, not the click.</p>
+        <table>
+          <tr><td>Impressions · Super Deals featured</td><td class="num">412K</td></tr>
+          <tr><td>Taps</td><td class="num">22.7K · CTR 5.51%</td></tr>
+          <tr><td>Vouchers redeemed</td><td class="num"><b>8.9K</b> (39% of taps)</td></tr>
+          <tr><td>Vouchers used</td><td class="num">6.3K (71%)</td></tr>
+          <tr><td>Daily cap hit before 3 PM</td><td class="num">9 of 30 days</td></tr>
+        </table>
+        <div class="insight warn" style="margin-top: 10px;">
+          <div class="icon">📈</div>
+          <div>
+            <h4>Scarcity signal — the next drop is underpriced</h4>
+            <p>The daily allocation sold out by mid-afternoon on a third of days. That's the data case for a larger allocation or a higher tile price on the next Setel drop — yield management, not guesswork.</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
-  <!-- ================= MODULE 5 ================= -->
+  <!-- ================= MODULE 02 · INVENTORY VALUE ================= -->
   <section class="module" id="m5">
     <div class="mod-head">
-      <span class="mod-chip">Module 05</span>
+      <span class="mod-chip">Module 02</span>
       <h2>Inventory value · what the traffic is worth</h2>
     </div>
     <p class="mod-sub">The same 27M monthly impressions, priced. Three illustrative scenarios using SEA wallet / super-app CPM ranges — the measurement layer is what moves you up this curve, because audited reach, per-slot CTR and uplift reporting are what justify the higher CPM and sell-through.</p>
@@ -482,6 +376,154 @@
             <h4>Even the conservative case covers the platform roughly 2×</h4>
             <p>Platform cost at this volume runs USD 80–135K per year (≈ RM 380–640K), plus one-time onboarding services. The conservative scenario alone returns ~RM 972K — and it excludes new placements (Super Deals expansion) and the CPM premium that verified uplift reporting historically commands.</p>
           </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MODULE 03 · PLACEMENTS ================= -->
+  <section class="module" id="m1">
+    <div class="mod-head">
+      <span class="mod-chip">Module 03</span>
+      <h2>Placement performance</h2>
+      <span class="phase-chip p1">PHASE 1 · DAY ONE</span>
+    </div>
+    <p class="mod-sub">Phase 1 fundamentals, live from the first week in production: impressions, taps and CTR for every monetizable placement — captured automatically the moment the SDK is live, with no tagging plan. Layout type and slot position map straight from the JSON payload your ad component already renders; placement ID and name arrive via the lightweight payload enrichment we discussed.</p>
+
+    <div class="card">
+      <h3>Placements · last 30 days</h3>
+      <table>
+        <thead>
+          <tr><th>Placement</th><th>Surface</th><th class="num">Impressions</th><th class="num">Taps</th><th class="num">CTR</th><th class="num">Trend</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><b>Home Hero Carousel</b> · first page</td><td><span class="cloud-chip c1">CLOUD 1 · WALLET</span></td><td class="num">11,200,000</td><td class="num">245,000</td><td class="num"><b>2.19%</b></td><td class="num"><span class="pill green">▲ +0.3pp</span></td></tr>
+          <tr><td>AEON Retail Hot Deals strip</td><td><span class="cloud-chip c1">CLOUD 1 · WALLET</span></td><td class="num">8,900,000</td><td class="num">142,400</td><td class="num">1.60%</td><td class="num"><span class="pill gray">flat</span></td></tr>
+          <tr><td>Member's Special banner</td><td><span class="cloud-chip c2">CLOUD 2 · MEMBERSHIP</span></td><td class="num">2,900,000</td><td class="num">110,200</td><td class="num"><b>3.80%</b></td><td class="num"><span class="pill green">▲ +0.5pp</span></td></tr>
+          <tr><td>Highlights &amp; member rewards tiles</td><td><span class="cloud-chip c2">CLOUD 2 · MEMBERSHIP</span></td><td class="num">2,600,000</td><td class="num">54,600</td><td class="num">2.10%</td><td class="num"><span class="pill gray">flat</span></td></tr>
+          <tr><td>Super Deals featured tiles</td><td><span class="cloud-chip c3">CLOUD 3 · SUPER DEALS</span></td><td class="num">1,400,000</td><td class="num">64,400</td><td class="num"><b>4.60%</b></td><td class="num"><span class="pill green">▲ +0.7pp</span></td></tr>
+        </tbody>
+      </table>
+      <div class="insight brand">
+        <div class="icon">📍</div>
+        <div>
+          <h4>Depth pays: CTR more than doubles from home to Super Deals</h4>
+          <p>The first-page hero reaches almost every session (89%) — that's your premium-reach product. Deeper placements reach fewer users but at up to ~2× the hero's engagement rate (and nearly 3× the Hot Deals strip) — that's your performance product. Two different rate cards, both measurable from day one.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-2w" style="margin-top: 14px;">
+      <div class="card">
+        <h3>Creative leaderboard · top campaigns running now</h3>
+        <p class="sub">Placement, layout and slot come from the ad payload; campaign and advertiser are joined server-side from the Cloud 4 ad portal — nothing extra to expose in the front end. Redemption counts illustrate Phase 2 conversion tracking; Phase 1 reports impressions, taps and CTR.</p>
+        <table>
+          <thead>
+            <tr><th>Creative</th><th>Placement</th><th class="num">Impr.</th><th class="num">Taps</th><th class="num">CTR</th><th class="num">Redemptions <span class="phase-chip p2" style="font-size: 9px; padding: 2px 6px;">PHASE 2</span></th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b>MEGA SALE · Home Appliance</b> (Magentara)</td><td>Hero · slot 1</td><td class="num">3.40M</td><td class="num">105.4K</td><td class="num"><b>3.10%</b></td><td class="num">12.4K</td></tr>
+            <tr><td>Setel RM10 voucher</td><td>Super Deals</td><td class="num">412K</td><td class="num">22.7K</td><td class="num"><b>5.51%</b></td><td class="num">8.9K</td></tr>
+            <tr><td>Samsung Galaxy S25 RM4,999</td><td>Super Deals</td><td class="num">386K</td><td class="num">14.3K</td><td class="num">3.70%</td><td class="num">1.1K</td></tr>
+            <tr><td>BananaBro · 5× AEON Points</td><td>Membership · Highlights</td><td class="num">640K</td><td class="num">16.0K</td><td class="num">2.50%</td><td class="num">4.2K receipts</td></tr>
+            <tr><td>Starbucks · 5× AEON Points</td><td>Membership · Highlights</td><td class="num">598K</td><td class="num">13.8K</td><td class="num">2.31%</td><td class="num">3.6K receipts</td></tr>
+            <tr><td>ZUS Coffee · 3× AEON Points</td><td>Membership · Highlights</td><td class="num">565K</td><td class="num">11.9K</td><td class="num">2.11%</td><td class="num">2.9K receipts</td></tr>
+            <tr><td>The Chicken Rice Shop · 5× points</td><td>Membership · Highlights</td><td class="num">512K</td><td class="num">9.7K</td><td class="num">1.89%</td><td class="num">2.1K receipts</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h3>Carousel slot position · CTR decay</h3>
+        <p class="sub">Mapped automatically from the <span style="font-family: ui-monospace, Menlo, monospace; font-size: 11px; background: var(--line-2); padding: 1px 5px; border-radius: 4px;">sequence</span> field in your ad payload. Slot 1 earns 2.6× the CTR of slot 4 — the basis for position-based pricing.</p>
+        <div class="chart-sm"><canvas id="slotChart"></canvas></div>
+        <div class="insight" style="margin-top: 12px;">
+          <div class="icon">💰</div>
+          <div>
+            <h4>Price slots, not just placements</h4>
+            <p>With per-slot CTR proven, slot 1 justifies a premium tier on the rate card. Today all four slots would be sold blind at the same price.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MODULE 2 ================= -->
+  <section class="module" id="m2">
+    <div class="mod-head">
+      <span class="mod-chip">Module 04</span>
+      <h2>Audience &amp; activity</h2>
+      <span class="phase-chip p1">PHASE 1 · DAY ONE</span>
+    </div>
+    <p class="mod-sub">Who is in the app, when, and where they spend their time. This is the audience story you sell to partners — reach, frequency and attention — and the scheduling intelligence for your own campaign team.</p>
+
+    <div class="grid grid-2w">
+      <div class="card">
+        <h3>Unique active users per day · 30 days</h3>
+        <p class="sub">2.84M unique users across the window · 4.4 sessions per user per month · 82% returning.</p>
+        <div class="chart-box"><canvas id="dauChart"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Active periods · share of daily activity by hour</h3>
+        <p class="sub">Two clear peaks: lunch (12–2 PM) and evening (8–10 PM). Campaign go-lives and push sends scheduled outside these windows are leaving reach on the table.</p>
+        <div class="chart-box"><canvas id="hourlyChart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 14px;">
+      <h3>Section engagement · visits and lingering time</h3>
+      <p class="sub">Sessions reaching each section of the app, with average time spent per visit. The bar shows reach; the right column is attention.</p>
+      <div class="seg"><div class="name">Wallet home (first page)</div><div class="bar"><div class="fill" style="width: 100%"></div></div><div class="v">12.6M</div><div class="t">0:38 avg</div></div>
+      <div class="seg"><div class="name">AEON Points · membership</div><div class="bar"><div class="fill" style="width: 24.6%"></div></div><div class="v">3.10M</div><div class="t">1:46 avg</div></div>
+      <div class="seg"><div class="name">Super Deals mini-app</div><div class="bar"><div class="fill" style="width: 9.4%"></div></div><div class="v">1.18M</div><div class="t">2:08 avg</div></div>
+      <div class="seg"><div class="name">Rewards catalog</div><div class="bar"><div class="fill" style="width: 7.1%"></div></div><div class="v">890K</div><div class="t">1:32 avg</div></div>
+      <div class="seg"><div class="name">Transaction history</div><div class="bar"><div class="fill" style="width: 5.5%"></div></div><div class="v">696K</div><div class="t">0:54 avg</div></div>
+      <div class="insight win">
+        <div class="icon">⏱</div>
+        <div>
+          <h4>Super Deals holds attention longest — and it's the least-supplied placement</h4>
+          <p>Users spend 2:08 per visit browsing deals — 3.4× the home page — yet Super Deals carries the smallest ad inventory of the three surfaces. Highest attention, highest CTR (4.6%), most headroom to add placements.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MODULE 3 ================= -->
+  <section class="module" id="m3">
+    <div class="mod-head">
+      <span class="mod-chip">Module 05</span>
+      <h2>Cross-surface journeys</h2>
+      <span class="phase-chip p1">PHASE 1 · DAY ONE</span>
+      <span class="phase-chip p2">CONVERSION STAGES · PHASE 2</span>
+    </div>
+    <p class="mod-sub">One user, one journey — even though the path crosses three vendors' surfaces. Native wallet (Softspace), membership WebView (Hitachi) and the Super Deals PWA (Eber) are stitched on AMP ID, so a vendor boundary never breaks the funnel.</p>
+
+    <div class="card">
+      <h3>The monetization path · hero banner to redemption</h3>
+      <div class="journey">
+        <div class="j-step c1"><div class="platform">Cloud 1 · Wallet</div><div class="label">Hero banner seen</div><div class="count">11.2M</div><div class="pct">100%</div></div>
+        <div class="j-arrow">→</div>
+        <div class="j-step c1"><div class="platform">Cloud 1 · Wallet</div><div class="label">Banner tapped</div><div class="count">245K</div><div class="pct">2.19%</div></div>
+        <div class="j-arrow">⇒</div>
+        <div class="j-step c2"><div class="platform">Cloud 2 · Membership</div><div class="label">Landing reached</div><div class="count">228K</div><div class="pct">93% handoff</div></div>
+        <div class="j-arrow">⇒</div>
+        <div class="j-step c3"><div class="platform">Cloud 3 · Super Deals</div><div class="label">Deal detail viewed</div><div class="count">142K</div><div class="pct">58% of taps</div></div>
+        <div class="j-arrow">→</div>
+        <div class="j-step c3" style="border-style: dashed;"><div class="platform">Cloud 3 · Super Deals <span class="phase-chip p2" style="font-size: 8px; padding: 1px 6px;">P2</span></div><div class="label">Redemption started</div><div class="count">96K</div><div class="pct">39% of taps</div></div>
+        <div class="j-arrow">→</div>
+        <div class="j-step c3" style="border-style: dashed;"><div class="platform">Cloud 3 · Super Deals <span class="phase-chip p2" style="font-size: 8px; padding: 1px 6px;">P2</span></div><div class="label">Redemption completed</div><div class="count">78.4K</div><div class="pct">32% of taps</div></div>
+      </div>
+      <div class="insight">
+        <div class="icon">↔</div>
+        <div>
+          <h4>The WebView handoff is clean — 93% survive the Cloud 1 → Cloud 2 transition</h4>
+          <p>The 7% loss between tap and landing is measurable per OS version and per campaign, so a regression in any vendor's release shows up the same day, not at the end of a campaign when a partner asks why numbers are short.</p>
+        </div>
+      </div>
+      <div class="insight warn">
+        <div class="icon">🕐</div>
+        <div>
+          <h4>Conversions don't stop at the session — +31.2K within 14 days <span class="phase-chip p2" style="font-size: 9px; padding: 2px 6px; vertical-align: middle;">PHASE 2</span></h4>
+          <p>Beyond the 78.4K same-journey redemptions, another 31.2K users exposed to the hero banner completed a redemption within 14 days — a 40% addition your partners never see in a click-only report. Exactly the "converts a few weeks later" case from our discussion: the attribution window follows the campaign duration, not the session.</p>
         </div>
       </div>
     </div>
@@ -556,11 +598,11 @@
       <span class="mod-chip">Rollout</span>
       <h2>Three phases · monetization live inside 3 months</h2>
     </div>
-    <p class="mod-sub">Sequenced to your stated timeline and the vendor-permission reality: the membership WebView is the technically fastest path, and both Phase 1 surfaces are gated on AEON Credit Service approval — securing that sign-off is the week-zero action.</p>
+    <p class="mod-sub">No proof-of-concept detour. The approvals a pilot would need — AEON Credit sign-off, the Hitachi CSP whitelist — are the same approvals production needs. Secure them once, go live once: auto-capture validates the tracking on real traffic in week one, which is exactly what a POC would have spent a month proving.</p>
     <div class="road">
       <div class="ph now">
-        <span class="pill magenta">PHASE 1 · POC · weeks 1–4</span>
-        <h4>Prove the tracking</h4>
+        <span class="pill magenta">PHASE 1 · weeks 1–4</span>
+        <h4>Instrument &amp; validate in production</h4>
         <ul>
           <li>Tag the membership page (web view — fastest path) + wallet home banner, once AEON Credit sign-off lands</li>
           <li>Impressions, taps, CTR per banner &amp; slot</li>
@@ -586,6 +628,13 @@
           <li>Cross-BU journeys &amp; delayed conversions across AEON operating companies</li>
           <li>BigQuery modeling: LTV, propensity, audience packages for partners</li>
         </ul>
+      </div>
+    </div>
+    <div class="insight win" style="margin-top: 14px;">
+      <div class="icon">⚡</div>
+      <div>
+        <h4>Why this page replaces the pilot</h4>
+        <p>A 4-week POC consumes the same cross-company coordination as a production go-live — then asks everyone to do it twice. Capture is automatic and retroactive, so there is no tagging plan to de-risk, and the mini-program playbook is already proven at scale with super-apps like GCash. Week-one production data answers every item on the checklist at the top of this page, a quarter sooner.</p>
       </div>
     </div>
   </section>
