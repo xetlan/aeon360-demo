@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AEON360 Commerce Media · Monetization Console</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>window.Chart || document.write('<script src="chart.umd.min.js"><\/script>')</script>
+<style>
+  :root {
+    --bg: #f7f8fb;
+    --panel: #ffffff;
+    --ink: #14101d;
+    --ink-2: #322a44;
+    --muted: #6f6a80;
+    --line: #e7e4ee;
+    --line-2: #f0eef5;
+    --brand: #b5007d;          /* AEON magenta */
+    --brand-soft: #fbe6f3;
+    --violet: #6d28d9;
+    --violet-soft: #f1ebfd;
+    --accent: #1d4ed8;
+    --accent-soft: #e6edff;
+    --good: #117a4f;
+    --good-soft: #dcf3e6;
+    --warn: #a55a00;
+    --warn-soft: #fdebcf;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 24px 24px 80px; }
+
+  /* Topbar */
+  .topbar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-mark { width: 34px; height: 34px; border-radius: 9px; background: var(--brand); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; letter-spacing: -0.02em; }
+  .logo-name { font-weight: 700; font-size: 16px; letter-spacing: -0.01em; }
+  .logo-name span { color: var(--muted); font-weight: 500; margin-left: 6px; font-size: 12px; }
+  .powered { font-size: 11px; color: var(--muted); text-align: right; }
+  .powered b { color: var(--ink-2); }
+
+  /* Module nav */
+  .modnav { position: sticky; top: 0; z-index: 50; background: rgba(247,248,251,0.96); backdrop-filter: blur(6px); padding: 12px 0; margin-bottom: 8px; border-bottom: 1px solid var(--line); display: flex; gap: 8px; flex-wrap: wrap; }
+  .modnav a { font-size: 12px; font-weight: 600; color: var(--ink-2); text-decoration: none; background: var(--panel); border: 1px solid var(--line); padding: 6px 12px; border-radius: 999px; }
+  .modnav a:hover { border-color: var(--brand); color: var(--brand); }
+  .modnav a .n { color: var(--brand); margin-right: 5px; font-weight: 800; }
+
+  /* Hero */
+  .hero { padding: 22px 0 4px; }
+  .crumb { font-size: 11px; color: var(--brand); text-transform: uppercase; letter-spacing: 0.18em; font-weight: 700; }
+  h1 { font-size: 30px; font-weight: 800; margin: 8px 0 8px; letter-spacing: -0.02em; line-height: 1.12; }
+  .lede { font-size: 14px; color: var(--muted); max-width: 860px; line-height: 1.6; margin: 0 0 14px; }
+  .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+  .badge { background: var(--panel); border: 1px solid var(--line); color: var(--muted); padding: 5px 11px; border-radius: 999px; font-size: 11px; }
+  .badge b { color: var(--ink-2); font-weight: 600; }
+
+  /* KPI strip */
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 14px; }
+  .kpi { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  .kpi .l { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  .kpi .v { font-size: 27px; font-weight: 800; margin-top: 6px; letter-spacing: -0.01em; }
+  .kpi .bench { font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.45; }
+  .kpi .bench b { color: var(--good); font-weight: 700; }
+
+  /* POC scorecard */
+  .poc { background: linear-gradient(135deg, var(--good-soft) 0%, #f2faf5 100%); border: 1px solid #bfe5cf; border-radius: 14px; padding: 16px 18px; margin-bottom: 26px; }
+  .poc h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--good); font-weight: 800; margin: 0 0 10px; }
+  .poc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .poc-item { background: rgba(255,255,255,0.7); border: 1px solid #d3ecdd; border-radius: 10px; padding: 10px 12px; font-size: 12px; }
+  .poc-item .check { color: var(--good); font-weight: 800; margin-right: 6px; }
+  .poc-item b { display: block; color: var(--ink); font-size: 13px; margin-bottom: 2px; }
+  .poc-item span { color: var(--muted); }
+  .poc-item .where { display: inline-block; margin-top: 6px; background: var(--good-soft); color: var(--good); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+  @media (max-width: 980px) { .kpis, .poc-grid { grid-template-columns: 1fr 1fr; } }
+
+  /* Modules */
+  section.module { margin: 30px 0; scroll-margin-top: 70px; }
+  .mod-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 4px; }
+  .mod-chip { background: var(--violet-soft); color: var(--violet); font-size: 10px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; }
+  .mod-head h2 { font-size: 21px; font-weight: 800; margin: 0; letter-spacing: -0.01em; }
+  .mod-sub { font-size: 13px; color: var(--muted); margin: 4px 0 14px; max-width: 880px; line-height: 1.55; }
+  .phase-chip { font-size: 10px; font-weight: 800; letter-spacing: 0.1em; padding: 3px 9px; border-radius: 999px; }
+  .phase-chip.p1 { background: var(--good-soft); color: var(--good); }
+  .phase-chip.p2 { background: var(--warn-soft); color: var(--warn); }
+
+  .grid { display: grid; gap: 14px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-2w { grid-template-columns: 1.5fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  @media (max-width: 980px) { .grid-2, .grid-2w, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+  .card h3 { font-size: 15px; margin: 0 0 4px; font-weight: 700; }
+  .card p.sub { color: var(--muted); font-size: 12px; margin: 4px 0 12px; line-height: 1.5; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line-2); }
+  th { color: var(--muted); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tr:last-child td { border-bottom: none; }
+  td b { font-weight: 700; }
+
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+  .pill.green { background: var(--good-soft); color: var(--good); }
+  .pill.blue { background: var(--accent-soft); color: var(--accent); }
+  .pill.amber { background: var(--warn-soft); color: var(--warn); }
+  .pill.magenta { background: var(--brand-soft); color: var(--brand); }
+  .pill.violet { background: var(--violet-soft); color: var(--violet); }
+  .pill.gray { background: var(--line-2); color: var(--muted); }
+  .cloud-chip { display: inline-block; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 5px; letter-spacing: 0.04em; }
+  .cloud-chip.c1 { background: #e8f0fe; color: #1d4ed8; }
+  .cloud-chip.c2 { background: #fdeee4; color: #c2410c; }
+  .cloud-chip.c3 { background: #e9f7ef; color: #117a4f; }
+  .cloud-chip.c4 { background: var(--violet-soft); color: var(--violet); }
+
+  /* Funnel */
+  .funnel { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+  .stage { display: grid; grid-template-columns: 210px 1fr 100px 70px; gap: 12px; align-items: center; font-size: 13px; }
+  .stage .name { color: var(--ink-2); font-weight: 500; }
+  .stage .bar { height: 22px; background: var(--line-2); border-radius: 6px; overflow: hidden; }
+  .stage .fill { height: 100%; background: linear-gradient(90deg, var(--brand), #d9469f); border-radius: 6px; }
+  .stage .num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .stage .pct { text-align: right; color: var(--muted); font-size: 12px; }
+
+  /* Journey */
+  .journey { display: flex; align-items: stretch; gap: 0; overflow-x: auto; padding: 8px 0; }
+  .j-step { flex: 1; min-width: 118px; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+  .j-step.c1 { border-top: 3px solid #1d4ed8; }
+  .j-step.c2 { border-top: 3px solid #c2410c; }
+  .j-step.c3 { border-top: 3px solid #117a4f; }
+  .j-step .platform { font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 800; }
+  .j-step .label { font-size: 12px; font-weight: 600; margin-top: 4px; line-height: 1.3; }
+  .j-step .count { font-size: 17px; font-weight: 800; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .j-step .pct { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .j-arrow { display: flex; align-items: center; justify-content: center; padding: 0 4px; color: var(--muted); font-size: 17px; flex-shrink: 0; }
+
+  /* Section engagement bars */
+  .seg { display: grid; grid-template-columns: 190px 1fr 90px 80px; gap: 10px; align-items: center; margin-bottom: 9px; font-size: 12px; }
+  .seg .name { color: var(--ink-2); font-weight: 500; }
+  .seg .bar { height: 9px; background: var(--line-2); border-radius: 5px; overflow: hidden; }
+  .seg .fill { height: 100%; background: var(--brand); border-radius: 5px; }
+  .seg .v { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .seg .t { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  /* Insights */
+  .insight { display: flex; gap: 12px; padding: 12px 14px; background: var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 8px; margin-top: 12px; }
+  .insight.win { background: var(--good-soft); border-left-color: var(--good); }
+  .insight.warn { background: var(--warn-soft); border-left-color: var(--warn); }
+  .insight.brand { background: var(--brand-soft); border-left-color: var(--brand); }
+  .insight .icon { font-size: 16px; flex-shrink: 0; }
+  .insight h4 { font-size: 13px; margin: 0 0 4px; font-weight: 700; }
+  .insight p { font-size: 12px; margin: 0; color: var(--ink-2); line-height: 1.55; }
+
+  /* Cloud cards */
+  .cloud-card { border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: var(--panel); }
+  .cloud-card .head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .cloud-card h4 { font-size: 13px; font-weight: 700; margin: 0; }
+  .cloud-card .vendor { font-size: 11px; color: var(--muted); }
+  .cloud-card ul { margin: 8px 0 0; padding-left: 16px; font-size: 12px; color: var(--ink-2); line-height: 1.55; }
+  .cloud-card ul li { margin-bottom: 3px; }
+
+  /* Roadmap */
+  .road { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 980px) { .road { grid-template-columns: 1fr; } }
+  .road .ph { border: 1px solid var(--line); border-radius: 12px; padding: 16px; background: var(--panel); }
+  .road .ph.now { border-color: var(--brand); box-shadow: 0 0 0 1px rgba(181,0,125,0.25); }
+  .road .ph h4 { font-size: 14px; margin: 8px 0 6px; font-weight: 800; }
+  .road .ph ul { margin: 0; padding-left: 16px; font-size: 12px; color: var(--ink-2); line-height: 1.6; }
+
+  .chart-box { height: 240px; position: relative; }
+  .chart-sm { height: 200px; position: relative; }
+  .grid > *, .card { min-width: 0; }
+  @media (max-width: 980px) { section.module { scroll-margin-top: 150px; } }
+  @media print {
+    .card, .kpi, .poc-item, .cloud-card, .insight, .road .ph, .chart-box, .chart-sm { break-inside: avoid; page-break-inside: avoid; }
+    .modnav { display: none; }
+  }
+
+  .footer { color: var(--muted); font-size: 11px; margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--line); line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="logo">
+      <div class="logo-mark">A</div>
+      <div class="logo-name">AEON360 <span>Commerce Media · Monetization Console</span></div>
+    </div>
+    <div class="powered">Powered by <b>Contentsquare</b><br/>Illustrative data window May 9 – Jun 7, 2026 · modeled Jun 8, 2026</div>
+  </div>
+
+  <!-- MODULE NAV -->
+  <nav class="modnav">
+    <a href="#m1"><span class="n">01</span>Placement performance</a>
+    <a href="#m2"><span class="n">02</span>Audience &amp; activity</a>
+    <a href="#m3"><span class="n">03</span>Cross-surface journeys</a>
+    <a href="#m4"><span class="n">04</span>Partner campaign report</a>
+    <a href="#m5"><span class="n">05</span>Inventory value</a>
+    <a href="#m6"><span class="n">06</span>Architecture &amp; data</a>
+    <a href="#roadmap"><span class="n">→</span>Roadmap</a>
+    <span style="margin-left: auto; align-self: center; background: var(--warn-soft); color: var(--warn); font-size: 10px; font-weight: 800; letter-spacing: 0.12em; padding: 5px 11px; border-radius: 999px;">ILLUSTRATIVE DATA</span>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="crumb">AEON Wallet · AEON Points mini-app · Super Deals</div>
+    <h1>From untracked banners to a sellable media business</h1>
+    <p class="lede">A working preview of the analytics AEON360 would operate day-to-day: every placement on the wallet first page and inside the AEON Points mini-app measured automatically, every journey stitched across all three user-facing surfaces on AMP ID and enriched server-side from the Cloud 4 ad portal, and a partner-ready report you can put in front of brands. Six modules — each one is a capability you switch on, not a project you build.</p>
+    <div class="badges">
+      <span class="badge">Scope · <b>Wallet home banner → AEON Points → Super Deals</b></span>
+      <span class="badge">Identity · <b>AMP ID (hashed) — no email, no direct PII</b></span>
+      <span class="badge">Capture · <b>100% automatic, retroactive — no tagging plan</b></span>
+      <span class="badge"><b>Illustrative data</b> · modeled on the architecture &amp; placements you shared</span>
+    </div>
+  </div>
+
+  <!-- KPI STRIP -->
+  <div class="kpis">
+    <div class="kpi">
+      <div class="l">Sessions · 30 days</div>
+      <div class="v">12.6M</div>
+      <div class="bench">≈151M run-rate (×12) — inside the 100–200M band quoted for pricing</div>
+    </div>
+    <div class="kpi">
+      <div class="l">Unique active users / day</div>
+      <div class="v">414K</div>
+      <div class="bench">Peak <b>486K</b> · Member Day weekend (May 30–31)</div>
+    </div>
+    <div class="kpi">
+      <div class="l">Ad impressions · 30 days</div>
+      <div class="v">27.0M</div>
+      <div class="bench">Across 5 instrumented placements on 3 surfaces</div>
+    </div>
+    <div class="kpi">
+      <div class="l">Blended CTR</div>
+      <div class="v">2.28%</div>
+      <div class="bench">616.6K banner taps · per-placement detail in Module 01</div>
+    </div>
+  </div>
+
+  <!-- POC SCORECARD -->
+  <div class="poc">
+    <h3>POC success criteria · where each one lives in this console</h3>
+    <div class="poc-grid">
+      <div class="poc-item"><b><span class="check">✓</span>Impressions, clicks &amp; CTR per banner</b><span>Every creative and slot measured individually, including carousel position.</span><br/><span class="where">MODULE 01</span></div>
+      <div class="poc-item"><b><span class="check">✓</span>Unique active users per day</b><span>Daily uniques, new vs returning, 30-day trend.</span><br/><span class="where">MODULE 02</span></div>
+      <div class="poc-item"><b><span class="check">✓</span>Active periods</b><span>Hour-by-hour activity profile — when your audience is actually in the app.</span><br/><span class="where">MODULE 02</span></div>
+      <div class="poc-item"><b><span class="check">✓</span>Journey &amp; lingering time per section</b><span>Most-visited placements and time spent per section, across all three surfaces.</span><br/><span class="where">MODULES 02 + 03</span></div>
+    </div>
+  </div>
+
+  <!-- ================= MODULE 1 ================= -->
+  <section class="module" id="m1">
+    <div class="mod-head">
+      <span class="mod-chip">Module 01</span>
+      <h2>Placement performance</h2>
+      <span class="phase-chip p1">PHASE 1 · POC</span>
+    </div>
+    <p class="mod-sub">The core of the POC: impressions, taps and CTR for every monetizable placement — captured automatically the moment the SDK is live, with no tagging plan. Layout type and slot position map straight from the JSON payload your ad component already renders; placement ID and name arrive via the lightweight payload enrichment we discussed.</p>
+
+    <div class="card">
+      <h3>Placements · last 30 days</h3>
+      <table>
+        <thead>
+          <tr><th>Placement</th><th>Surface</th><th class="num">Impressions</th><th class="num">Taps</th><th class="num">CTR</th><th class="num">Trend</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><b>Home Hero Carousel</b> · first page</td><td><span class="cloud-chip c1">CLOUD 1 · WALLET</span></td><td class="num">11,200,000</td><td class="num">245,000</td><td class="num"><b>2.19%</b></td><td class="num"><span class="pill green">▲ +0.3pp</span></td></tr>
+          <tr><td>AEON Retail Hot Deals strip</td><td><span class="cloud-chip c1">CLOUD 1 · WALLET</span></td><td class="num">8,900,000</td><td class="num">142,400</td><td class="num">1.60%</td><td class="num"><span class="pill gray">flat</span></td></tr>
+          <tr><td>Member's Special banner</td><td><span class="cloud-chip c2">CLOUD 2 · MEMBERSHIP</span></td><td class="num">2,900,000</td><td class="num">110,200</td><td class="num"><b>3.80%</b></td><td class="num"><span class="pill green">▲ +0.5pp</span></td></tr>
+          <tr><td>Highlights &amp; member rewards tiles</td><td><span class="cloud-chip c2">CLOUD 2 · MEMBERSHIP</span></td><td class="num">2,600,000</td><td class="num">54,600</td><td class="num">2.10%</td><td class="num"><span class="pill gray">flat</span></td></tr>
+          <tr><td>Super Deals featured tiles</td><td><span class="cloud-chip c3">CLOUD 3 · SUPER DEALS</span></td><td class="num">1,400,000</td><td class="num">64,400</td><td class="num"><b>4.60%</b></td><td class="num"><span class="pill green">▲ +0.7pp</span></td></tr>
+        </tbody>
+      </table>
+      <div class="insight brand">
+        <div class="icon">📍</div>
+        <div>
+          <h4>Depth pays: CTR more than doubles from home to Super Deals</h4>
+          <p>The first-page hero reaches almost every session (89%) — that's your premium-reach product. Deeper placements reach fewer users but at up to ~2× the hero's engagement rate (and nearly 3× the Hot Deals strip) — that's your performance product. Two different rate cards, both measurable from day one.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-2w" style="margin-top: 14px;">
+      <div class="card">
+        <h3>Creative leaderboard · top campaigns running now</h3>
+        <p class="sub">Placement, layout and slot come from the ad payload; campaign and advertiser are joined server-side from the Cloud 4 ad portal — nothing extra to expose in the front end. Redemption counts illustrate Phase 2 conversion tracking; the POC itself reports impressions, taps and CTR.</p>
+        <table>
+          <thead>
+            <tr><th>Creative</th><th>Placement</th><th class="num">Impr.</th><th class="num">Taps</th><th class="num">CTR</th><th class="num">Redemptions <span class="phase-chip p2" style="font-size: 9px; padding: 2px 6px;">PHASE 2</span></th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b>MEGA SALE · Home Appliance</b> (Magentara)</td><td>Hero · slot 1</td><td class="num">3.40M</td><td class="num">105.4K</td><td class="num"><b>3.10%</b></td><td class="num">12.4K</td></tr>
+            <tr><td>Setel RM10 voucher</td><td>Super Deals</td><td class="num">412K</td><td class="num">22.7K</td><td class="num"><b>5.51%</b></td><td class="num">8.9K</td></tr>
+            <tr><td>Samsung Galaxy S25 RM4,999</td><td>Super Deals</td><td class="num">386K</td><td class="num">14.3K</td><td class="num">3.70%</td><td class="num">1.1K</td></tr>
+            <tr><td>BananaBro · 5× AEON Points</td><td>Membership · Highlights</td><td class="num">640K</td><td class="num">16.0K</td><td class="num">2.50%</td><td class="num">4.2K receipts</td></tr>
+            <tr><td>Starbucks · 5× AEON Points</td><td>Membership · Highlights</td><td class="num">598K</td><td class="num">13.8K</td><td class="num">2.31%</td><td class="num">3.6K receipts</td></tr>
+            <tr><td>ZUS Coffee · 3× AEON Points</td><td>Membership · Highlights</td><td class="num">565K</td><td class="num">11.9K</td><td class="num">2.11%</td><td class="num">2.9K receipts</td></tr>
+            <tr><td>The Chicken Rice Shop · 5× points</td><td>Membership · Highlights</td><td class="num">512K</td><td class="num">9.7K</td><td class="num">1.89%</td><td class="num">2.1K receipts</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h3>Carousel slot position · CTR decay</h3>
+        <p class="sub">Mapped automatically from the <span style="font-family: ui-monospace, Menlo, monospace; font-size: 11px; background: var(--line-2); padding: 1px 5px; border-radius: 4px;">sequence</span> field in your ad payload. Slot 1 earns 2.6× the CTR of slot 4 — the basis for position-based pricing.</p>
+        <div class="chart-sm"><canvas id="slotChart"></canvas></div>
+        <div class="insight" style="margin-top: 12px;">
+          <div class="icon">💰</div>
+          <div>
+            <h4>Price slots, not just placements</h4>
+            <p>With per-slot CTR proven, slot 1 justifies a premium tier on the rate card. Today all four slots would be sold blind at the same price.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MODULE 2 ================= -->
+  <section class="module" id="m2">
+    <div class="mod-head">
+      <span class="mod-chip">Module 02</span>
+      <h2>Audience &amp; activity</h2>
+      <span class="phase-chip p1">PHASE 1 · POC</span>
+    </div>
+    <p class="mod-sub">Who is in the app, when, and where they spend their time. This is the audience story you sell to partners — reach, frequency and attention — and the scheduling intelligence for your own campaign team.</p>
+
+    <div class="grid grid-2w">
+      <div class="card">
+        <h3>Unique active users per day · 30 days</h3>
+        <p class="sub">2.84M unique users across the window · 4.4 sessions per user per month · 82% returning.</p>
+        <div class="chart-box"><canvas id="dauChart"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Active periods · share of daily activity by hour</h3>
+        <p class="sub">Two clear peaks: lunch (12–2 PM) and evening (8–10 PM). Campaign go-lives and push sends scheduled outside these windows are leaving reach on the table.</p>
+        <div class="chart-box"><canvas id="hourlyChart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 14px;">
+      <h3>Section engagement · visits and lingering time</h3>
+      <p class="sub">Sessions reaching each section of the app, with average time spent per visit. The bar shows reach; the right column is attention.</p>
+      <div class="seg"><div class="name">Wallet home (first page)</div><div class="bar"><div class="fill" style="width: 100%"></div></div><div class="v">12.6M</div><div class="t">0:38 avg</div></div>
+      <div class="seg"><div class="name">AEON Points · membership</div><div class="bar"><div class="fill" style="width: 24.6%"></div></div><div class="v">3.10M</div><div class="t">1:46 avg</div></div>
+      <div class="seg"><div class="name">Super Deals mini-app</div><div class="bar"><div class="fill" style="width: 9.4%"></div></div><div class="v">1.18M</div><div class="t">2:08 avg</div></div>
+      <div class="seg"><div class="name">Rewards catalog</div><div class="bar"><div class="fill" style="width: 7.1%"></div></div><div class="v">890K</div><div class="t">1:32 avg</div></div>
+      <div class="seg"><div class="name">Transaction history</div><div class="bar"><div class="fill" style="width: 5.5%"></div></div><div class="v">696K</div><div class="t">0:54 avg</div></div>
+      <div class="insight win">
+        <div class="icon">⏱</div>
+        <div>
+          <h4>Super Deals holds attention longest — and it's the least-supplied placement</h4>
+          <p>Users spend 2:08 per visit browsing deals — 3.4× the home page — yet Super Deals carries the smallest ad inventory of the three surfaces. Highest attention, highest CTR (4.6%), most headroom to add placements.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MODULE 3 ================= -->
+  <section class="module" id="m3">
+    <div class="mod-head">
+      <span class="mod-chip">Module 03</span>
+      <h2>Cross-surface journeys</h2>
+      <span class="phase-chip p1">PHASE 1 · POC</span>
+      <span class="phase-chip p2">CONVERSION STAGES · PHASE 2</span>
+    </div>
+    <p class="mod-sub">One user, one journey — even though the path crosses three vendors' surfaces. Native wallet (Softspace), membership WebView (Hitachi) and the Super Deals PWA (Eber) are stitched on AMP ID, so a vendor boundary never breaks the funnel.</p>
+
+    <div class="card">
+      <h3>The monetization path · hero banner to redemption</h3>
+      <div class="journey">
+        <div class="j-step c1"><div class="platform">Cloud 1 · Wallet</div><div class="label">Hero banner seen</div><div class="count">11.2M</div><div class="pct">100%</div></div>
+        <div class="j-arrow">→</div>
+        <div class="j-step c1"><div class="platform">Cloud 1 · Wallet</div><div class="label">Banner tapped</div><div class="count">245K</div><div class="pct">2.19%</div></div>
+        <div class="j-arrow">⇒</div>
+        <div class="j-step c2"><div class="platform">Cloud 2 · Membership</div><div class="label">Landing reached</div><div class="count">228K</div><div class="pct">93% handoff</div></div>
+        <div class="j-arrow">⇒</div>
+        <div class="j-step c3"><div class="platform">Cloud 3 · Super Deals</div><div class="label">Deal detail viewed</div><div class="count">142K</div><div class="pct">58% of taps</div></div>
+        <div class="j-arrow">→</div>
+        <div class="j-step c3" style="border-style: dashed;"><div class="platform">Cloud 3 · Super Deals <span class="phase-chip p2" style="font-size: 8px; padding: 1px 6px;">P2</span></div><div class="label">Redemption started</div><div class="count">96K</div><div class="pct">39% of taps</div></div>
+        <div class="j-arrow">→</div>
+        <div class="j-step c3" style="border-style: dashed;"><div class="platform">Cloud 3 · Super Deals <span class="phase-chip p2" style="font-size: 8px; padding: 1px 6px;">P2</span></div><div class="label">Redemption completed</div><div class="count">78.4K</div><div class="pct">32% of taps</div></div>
+      </div>
+      <div class="insight">
+        <div class="icon">↔</div>
+        <div>
+          <h4>The WebView handoff is clean — 93% survive the Cloud 1 → Cloud 2 transition</h4>
+          <p>The 7% loss between tap and landing is measurable per OS version and per campaign, so a regression in any vendor's release shows up the same day, not at the end of a campaign when a partner asks why numbers are short.</p>
+        </div>
+      </div>
+      <div class="insight warn">
+        <div class="icon">🕐</div>
+        <div>
+          <h4>Conversions don't stop at the session — +31.2K within 14 days <span class="phase-chip p2" style="font-size: 9px; padding: 2px 6px; vertical-align: middle;">PHASE 2</span></h4>
+          <p>Beyond the 78.4K same-journey redemptions, another 31.2K users exposed to the hero banner completed a redemption within 14 days — a 40% addition your partners never see in a click-only report. Exactly the "converts a few weeks later" case from our discussion: the attribution window follows the campaign duration, not the session.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MODULE 4 ================= -->
+  <section class="module" id="m4">
+    <div class="mod-head">
+      <span class="mod-chip">Module 04</span>
+      <h2>Partner campaign report</h2>
+      <span class="phase-chip p2">PHASE 2 · CONVERSIONS</span>
+    </div>
+    <p class="mod-sub">The artifact that closes media deals: what a tenant sees when they buy a six-month package. Using the example raised on our call — a fashion retailer ("Uniqlo, for the sake of discussion") buying media points to reach AEON members. Click-through is the leading indicator the partner watches weekly; conversion uplift is what renews the contract. Shared via scoped access — the partner sees their campaign, nothing else.</p>
+
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+        <div>
+          <h3 style="font-size: 17px;">UNIQLO · Member Exclusive <span class="pill magenta" style="margin-left: 6px;">6-month media package</span></h3>
+          <p class="sub" style="margin-bottom: 0;">Jan 5 – Jul 5, 2026 · package RM 180,000 in media points · spend to date RM 152,000 (84%) · placements: Hero Carousel + Member's Special</p>
+        </div>
+        <span class="pill green">Active · on pace</span>
+      </div>
+
+      <div class="grid grid-4">
+        <div class="kpi"><div class="l">Members reached</div><div class="v">1.92M</div><div class="bench">68% of monthly actives</div></div>
+        <div class="kpi"><div class="l">Impressions</div><div class="v">8.6M</div><div class="bench">Frequency 4.5 per member</div></div>
+        <div class="kpi"><div class="l">Click-through rate</div><div class="v">2.17%</div><div class="bench">187K taps · leading indicator</div></div>
+        <div class="kpi"><div class="l">Exposed members who purchased</div><div class="v">30.1K</div><div class="bench">at Uniqlo, within attribution window</div></div>
+      </div>
+
+      <div class="grid grid-2w" style="margin-top: 14px;">
+        <div class="card" style="border-color: var(--line-2); background: #fcfbfe;">
+          <h3>Leading vs lagging · weekly CTR and cumulative purchases</h3>
+          <p class="sub">CTR (line) gives the partner weekly confidence the campaign is alive; cumulative purchases (bars) are what drive the dollars. Creative refresh in week 10 lifted CTR from 1.98% to 2.38%.</p>
+          <div class="chart-box"><canvas id="partnerChart"></canvas></div>
+        </div>
+        <div class="card" style="border-color: var(--line-2); background: #fcfbfe;">
+          <h3>Incremental uplift · exposed vs matched control</h3>
+          <table>
+            <tr><td>Purchase rate · exposed members</td><td class="num"><b>1.57%</b></td></tr>
+            <tr><td>Purchase rate · matched control</td><td class="num">1.24%</td></tr>
+            <tr><td>Relative uplift</td><td class="num"><span class="pill green">+27%</span></td></tr>
+            <tr><td>Incremental transactions</td><td class="num"><b>+6,340</b></td></tr>
+            <tr><td>Incremental sales (avg basket RM 146)</td><td class="num"><b>RM 926K</b></td></tr>
+            <tr><td>Incremental ROAS on spend to date</td><td class="num"><b>6.1×</b></td></tr>
+          </table>
+          <div class="insight win" style="margin-top: 10px;">
+            <div class="icon">🤝</div>
+            <div>
+              <h4>This table is the renewal conversation</h4>
+              <p>"RM 152K spent, RM 926K incremental sales" is a sentence a partner's CFO accepts. Click counts alone never survive that meeting.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MODULE 5 ================= -->
+  <section class="module" id="m5">
+    <div class="mod-head">
+      <span class="mod-chip">Module 05</span>
+      <h2>Inventory value · what the traffic is worth</h2>
+    </div>
+    <p class="mod-sub">The same 27M monthly impressions, priced. Three illustrative scenarios using SEA wallet / super-app CPM ranges — the measurement layer is what moves you up this curve, because audited reach, per-slot CTR and uplift reporting are what justify the higher CPM and sell-through.</p>
+
+    <div class="grid grid-2w">
+      <div class="card">
+        <h3>Monthly ad revenue potential · by scenario</h3>
+        <div class="chart-box"><canvas id="yieldChart"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Scenario assumptions</h3>
+        <table>
+          <thead><tr><th>Scenario</th><th class="num">CPM</th><th class="num">Sell-through</th><th class="num">Monthly</th><th class="num">Annual</th></tr></thead>
+          <tbody>
+            <tr><td>Conservative</td><td class="num">RM 10</td><td class="num">30%</td><td class="num">RM 81K</td><td class="num">RM 972K</td></tr>
+            <tr><td><b>Base</b></td><td class="num">RM 15</td><td class="num">50%</td><td class="num"><b>RM 202K</b></td><td class="num"><b>RM 2.43M</b></td></tr>
+            <tr><td>Stretch</td><td class="num">RM 20</td><td class="num">70%</td><td class="num">RM 378K</td><td class="num">RM 4.54M</td></tr>
+          </tbody>
+        </table>
+        <div class="insight brand" style="margin-top: 12px;">
+          <div class="icon">📐</div>
+          <div>
+            <h4>Even the conservative case covers the platform roughly 2×</h4>
+            <p>Platform cost at this volume runs USD 80–135K per year (≈ RM 380–640K), plus one-time onboarding services. The conservative scenario alone returns ~RM 972K — and it excludes new placements (Super Deals expansion) and the CPM premium that verified uplift reporting historically commands.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MODULE 6 ================= -->
+  <section class="module" id="m6">
+    <div class="mod-head">
+      <span class="mod-chip">Module 06</span>
+      <h2>Architecture, identity &amp; data</h2>
+    </div>
+    <p class="mod-sub">How the console maps onto the four-cloud estate you walked us through — who instruments what, how identity works without PII, and how the data lands in BigQuery.</p>
+
+    <div class="grid grid-4">
+      <div class="cloud-card">
+        <div class="head"><h4>Wallet App <span class="cloud-chip c1">CLOUD 1</span></h4></div>
+        <div class="vendor">Softspace · AWS · native iOS Swift / Android Kotlin</div>
+        <ul>
+          <li>Native SDK · auto-captures hero carousel &amp; Hot Deals</li>
+          <li>Instrumentation requires AEON Credit Service approval</li>
+        </ul>
+      </div>
+      <div class="cloud-card">
+        <div class="head"><h4>Membership <span class="cloud-chip c2">CLOUD 2</span></h4></div>
+        <div class="vendor">Hitachi · AWS · React WebView in native</div>
+        <ul>
+          <li>JS tag in the WebView · covers AEON Points pages</li>
+          <li>CSP whitelist for the tag domain, coordinated with Hitachi</li>
+          <li>Instrumentation requires AEON Credit Service approval</li>
+        </ul>
+      </div>
+      <div class="cloud-card">
+        <div class="head"><h4>Super Deals <span class="cloud-chip c3">CLOUD 3</span></h4></div>
+        <div class="vendor">Eber · SaaS PWA rendered in the Hitachi WebView</div>
+        <ul>
+          <li>Same JS tag, deployed in the Eber PWA</li>
+          <li>Vendor request handled directly by AEON360</li>
+        </ul>
+      </div>
+      <div class="cloud-card">
+        <div class="head"><h4>Ad Portal <span class="cloud-chip c4">CLOUD 4</span></h4></div>
+        <div class="vendor">AEON360 · GCP · Java backend</div>
+        <ul>
+          <li>Server-side join: placement ID, name, layout, slot — campaign &amp; advertiser stay out of the front end</li>
+          <li>AEON360-owned, no external approval needed</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="grid grid-3" style="margin-top: 14px;">
+      <div class="card">
+        <h3>Pseudonymous identity — no email</h3>
+        <p class="sub" style="margin-bottom: 8px;">AMP ID (hashed) is the master identity — no email collected. Sessions, devices and return visits stitch retroactively the moment a user logs in. If onboarding changes and a new ID is introduced later, the switch is non-destructive.</p>
+        <span class="pill magenta">AMP ID master</span> <span class="pill gray">email not required</span> <span class="pill gray">user properties: tier, BU flags</span>
+      </div>
+      <div class="card">
+        <h3>Masked replay for support</h3>
+        <p class="sub" style="margin-bottom: 8px;">Session replay is a masked reconstruction, not a recording — every sensitive element hidden by default. A support agent can ask a caller for their AMP ID and replay exactly what happened, without exposing personal data.</p>
+        <span class="pill violet">masked by default</span> <span class="pill gray">find session by AMP ID</span>
+      </div>
+      <div class="card">
+        <h3>BigQuery, natively</h3>
+        <p class="sub" style="margin-bottom: 8px;">All behavioral data is queryable from BigQuery in place — no duplicated storage cost, you pay only BigQuery compute. Egress applies only if you copy data out. 13 months retention; Milk's team joins it to transactional data for modeling.</p>
+        <span class="pill blue">no duplicate storage</span> <span class="pill gray">13-month retention</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROADMAP -->
+  <section class="module" id="roadmap">
+    <div class="mod-head">
+      <span class="mod-chip">Rollout</span>
+      <h2>Three phases · monetization live inside 3 months</h2>
+    </div>
+    <p class="mod-sub">Sequenced to your stated timeline and the vendor-permission reality: the membership WebView is the technically fastest path, and both Phase 1 surfaces are gated on AEON Credit Service approval — securing that sign-off is the week-zero action.</p>
+    <div class="road">
+      <div class="ph now">
+        <span class="pill magenta">PHASE 1 · POC · weeks 1–4</span>
+        <h4>Prove the tracking</h4>
+        <ul>
+          <li>Tag the membership page (web view — fastest path) + wallet home banner, once AEON Credit sign-off lands</li>
+          <li>Impressions, taps, CTR per banner &amp; slot</li>
+          <li>Daily uniques, active periods, lingering time</li>
+          <li>Cross-surface journey Cloud 1 → 2 → 3</li>
+        </ul>
+      </div>
+      <div class="ph">
+        <span class="pill amber">PHASE 2 · months 2–3</span>
+        <h4>Switch on monetization</h4>
+        <ul>
+          <li>Conversion events: voucher redemption, points exchange, purchase</li>
+          <li>Push-notification attribution</li>
+          <li>Partner campaign reports with scoped access</li>
+          <li>Rate card backed by per-slot CTR data</li>
+        </ul>
+      </div>
+      <div class="ph">
+        <span class="pill gray">PHASE 3 · beyond</span>
+        <h4>Scale across the estate</h4>
+        <ul>
+          <li>All mini-programs as they launch — the playbook proven with super-apps like GCash</li>
+          <li>Cross-BU journeys &amp; delayed conversions across AEON operating companies</li>
+          <li>BigQuery modeling: LTV, propensity, audience packages for partners</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">
+    All figures are illustrative, modeled in realistic ranges for a Malaysian e-wallet at 100–200M annual sessions; they are not measurements of the AEON Wallet. Placement names, surfaces, vendor architecture and the partner example reflect what AEON360 shared in our June 2026 discussions. Partner brands shown (Uniqlo, Setel, Samsung, BananaBro, ZUS Coffee, Starbucks, The Chicken Rice Shop) appear solely to make the illustration concrete, with no implied campaign data; Magentara is AEON's own campaign branding as seen in the app. Pricing references the indicative USD 80–135K platform band discussed (onboarding services additional); a precise quote follows confirmed session volume. Prepared by Contentsquare for AEON360 · Jun 2026.
+  </div>
+</div>
+
+<script>
+const C = { brand: '#b5007d', violet: '#6d28d9', accent: '#1d4ed8', muted: '#6f6a80', line: '#e7e4ee', good: '#117a4f' };
+Chart.defaults.color = C.muted;
+Chart.defaults.borderColor = C.line;
+Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, Inter, "Segoe UI", system-ui, sans-serif';
+
+new Chart(document.getElementById('slotChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Slot 1', 'Slot 2', 'Slot 3', 'Slot 4'],
+    datasets: [{ label: 'CTR %', data: [3.1, 2.3, 1.7, 1.2], backgroundColor: ['#b5007d', '#c94d9e', '#dd8fbf', '#ecc3da'], borderRadius: 6, borderSkipped: false }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => 'CTR: ' + ctx.parsed.y + '%' } } },
+    scales: { y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { callback: v => v + '%' } }, x: { grid: { display: false } } }
+  }
+});
+
+new Chart(document.getElementById('dauChart'), {
+  type: 'line',
+  data: {
+    labels: ['May 9','','','May 12','','','May 15','','','May 18','','','May 21','','','May 24','','','May 27','','','May 30','','','Jun 2','','','Jun 5','','Jun 7'],
+    datasets: [{ label: 'Unique users (000s)', data: [388,396,402,391,384,412,428,398,391,386,405,419,442,431,396,388,392,401,411,424,448,462,486,471,432,408,396,402,415,409], borderColor: C.brand, backgroundColor: 'rgba(181,0,125,0.08)', tension: 0.32, fill: true, borderWidth: 2, pointRadius: 2 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.parsed.y + 'K unique users' } } },
+    scales: { y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { callback: v => v + 'K' } }, x: { grid: { display: false }, ticks: { maxRotation: 0, autoSkip: false } } }
+  }
+});
+
+new Chart(document.getElementById('hourlyChart'), {
+  type: 'bar',
+  data: {
+    labels: ['12a','1a','2a','3a','4a','5a','6a','7a','8a','9a','10a','11a','12p','1p','2p','3p','4p','5p','6p','7p','8p','9p','10p','11p'],
+    datasets: [{ label: 'Share of daily activity', data: [1.0,0.7,0.4,0.3,0.3,0.5,1.3,2.7,4.0,4.9,5.6,6.6,8.1,7.3,5.6,4.9,5.1,5.5,6.1,6.9,7.8,7.1,4.7,2.6], backgroundColor: 'rgba(109,40,217,0.75)', borderRadius: 4, borderSkipped: false }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.parsed.y + '% of daily activity' } } },
+    scales: { y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { callback: v => v + '%' } }, x: { grid: { display: false } } }
+  }
+});
+
+new Chart(document.getElementById('partnerChart'), {
+  type: 'bar',
+  data: {
+    labels: ['W2','W4','W6','W8','W10','W12','W14','W16','W18','W20','W22'],
+    datasets: [
+      { type: 'line', label: 'CTR %', data: [1.82,1.95,2.04,1.98,2.38,2.31,2.26,2.22,2.19,2.16,2.17], borderColor: C.brand, backgroundColor: 'rgba(181,0,125,0)', borderWidth: 2, tension: 0.3, pointRadius: 3, yAxisID: 'y1' },
+      { label: 'Cumulative purchases (000s)', data: [2.1,4.4,6.8,8.9,11.3,14.2,17.1,19.9,22.8,26.3,30.1], backgroundColor: 'rgba(109,40,217,0.55)', borderRadius: 4, borderSkipped: false, yAxisID: 'y' }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } } },
+    scales: {
+      y: { position: 'left', grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { callback: v => v + 'K' }, title: { display: true, text: 'Purchases', font: { size: 10 } } },
+      y1: { position: 'right', grid: { display: false }, ticks: { callback: v => v + '%' }, title: { display: true, text: 'CTR', font: { size: 10 } } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+new Chart(document.getElementById('yieldChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Conservative', 'Base', 'Stretch'],
+    datasets: [{ label: 'Monthly revenue (RM K)', data: [81, 202.5, 378], backgroundColor: ['#ecc3da', '#c94d9e', '#b5007d'], borderRadius: 6, borderSkipped: false }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => 'RM ' + ctx.parsed.y + 'K / month · RM ' + (ctx.parsed.y * 12 / 1000).toFixed(2) + 'M / year' } } },
+    scales: { y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { callback: v => 'RM ' + v + 'K' } }, x: { grid: { display: false } } }
+  }
+});
+</script>
+</body>
+</html>
