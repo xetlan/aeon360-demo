@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AEON360 Commerce Media · Monetization Console — Cloud 2 First</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>window.Chart || document.write('<script src="../chart.umd.min.js"><\/script>')</script>
+<style>
+  :root {
+    --bg: #f7f8fb;
+    --panel: #ffffff;
+    --ink: #14101d;
+    --ink-2: #322a44;
+    --muted: #6f6a80;
+    --line: #e7e4ee;
+    --line-2: #f0eef5;
+    --brand: #b5007d;          /* AEON magenta */
+    --brand-soft: #fbe6f3;
+    --violet: #6d28d9;
+    --violet-soft: #f1ebfd;
+    --accent: #1d4ed8;
+    --accent-soft: #e6edff;
+    --good: #117a4f;
+    --good-soft: #dcf3e6;
+    --warn: #a55a00;
+    --warn-soft: #fdebcf;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 24px 24px 80px; }
+
+  .topbar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-mark { width: 34px; height: 34px; border-radius: 9px; background: var(--brand); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; letter-spacing: -0.02em; }
+  .logo-name { font-weight: 700; font-size: 16px; letter-spacing: -0.01em; }
+  .logo-name span { color: var(--muted); font-weight: 500; margin-left: 6px; font-size: 12px; }
+  .powered { font-size: 11px; color: var(--muted); text-align: right; }
+  .powered b { color: var(--ink-2); }
+  .nav-pill { display: inline-flex; gap: 6px; align-items: center; font-size: 12px; color: var(--muted); background: var(--panel); padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); text-decoration: none; margin-right: 10px; }
+  .nav-pill:hover { color: var(--brand); border-color: var(--brand); }
+
+  .modnav { position: sticky; top: 0; z-index: 50; background: rgba(247,248,251,0.96); backdrop-filter: blur(6px); padding: 12px 0; margin-bottom: 8px; border-bottom: 1px solid var(--line); display: flex; gap: 8px; flex-wrap: wrap; }
+  .modnav a { font-size: 12px; font-weight: 600; color: var(--ink-2); text-decoration: none; background: var(--panel); border: 1px solid var(--line); padding: 6px 12px; border-radius: 999px; }
+  .modnav a:hover { border-color: var(--brand); color: var(--brand); }
+  .modnav a .n { color: var(--brand); margin-right: 5px; font-weight: 800; }
+
+  .hero { padding: 22px 0 4px; }
+  .crumb { font-size: 11px; color: var(--brand); text-transform: uppercase; letter-spacing: 0.18em; font-weight: 700; }
+  h1 { font-size: 30px; font-weight: 800; margin: 8px 0 8px; letter-spacing: -0.02em; line-height: 1.12; }
+  .lede { font-size: 14px; color: var(--muted); max-width: 860px; line-height: 1.6; margin: 0 0 14px; }
+  .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+  .badge { background: var(--panel); border: 1px solid var(--line); color: var(--muted); padding: 5px 11px; border-radius: 999px; font-size: 11px; }
+  .badge b { color: var(--ink-2); font-weight: 600; }
+
+  /* Scope banner */
+  .scope { background: linear-gradient(135deg, var(--violet-soft) 0%, #f7f3ff 100%); border: 1px solid #ddd0f6; border-radius: 14px; padding: 16px 20px; margin-bottom: 18px; display: flex; gap: 14px; align-items: flex-start; }
+  .scope .icon { width: 32px; height: 32px; border-radius: 8px; background: var(--violet); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; font-weight: 800; }
+  .scope h3 { font-size: 12px; margin: 0 0 4px; color: var(--violet); text-transform: uppercase; letter-spacing: 0.14em; font-weight: 800; }
+  .scope p { font-size: 13px; margin: 0; color: var(--ink-2); line-height: 1.55; }
+  .scope p b { color: var(--ink); }
+
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 14px; }
+  .kpi { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  .kpi .l { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  .kpi .v { font-size: 27px; font-weight: 800; margin-top: 6px; letter-spacing: -0.01em; }
+  .kpi .bench { font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.45; }
+  .kpi .bench b { color: var(--good); font-weight: 700; }
+
+  .poc { background: linear-gradient(135deg, var(--good-soft) 0%, #f2faf5 100%); border: 1px solid #bfe5cf; border-radius: 14px; padding: 16px 18px; margin-bottom: 26px; }
+  .poc h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--good); font-weight: 800; margin: 0 0 10px; }
+  .poc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .poc-item { background: rgba(255,255,255,0.7); border: 1px solid #d3ecdd; border-radius: 10px; padding: 10px 12px; font-size: 12px; }
+  .poc-item .check { color: var(--good); font-weight: 800; margin-right: 6px; }
+  .poc-item b { display: block; color: var(--ink); font-size: 13px; margin-bottom: 2px; }
+  .poc-item span { color: var(--muted); }
+  .poc-item .where { display: inline-block; margin-top: 6px; background: var(--good-soft); color: var(--good); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+  @media (max-width: 980px) { .kpis, .poc-grid { grid-template-columns: 1fr 1fr; } }
+
+  section.module { margin: 30px 0; scroll-margin-top: 70px; }
+  .mod-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 4px; }
+  .mod-chip { background: var(--violet-soft); color: var(--violet); font-size: 10px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; }
+  .mod-head h2 { font-size: 21px; font-weight: 800; margin: 0; letter-spacing: -0.01em; }
+  .mod-sub { font-size: 13px; color: var(--muted); margin: 4px 0 14px; max-width: 880px; line-height: 1.55; }
+  .phase-chip { font-size: 10px; font-weight: 800; letter-spacing: 0.1em; padding: 3px 9px; border-radius: 999px; }
+  .phase-chip.p1 { background: var(--good-soft); color: var(--good); }
+  .phase-chip.p2 { background: var(--warn-soft); color: var(--warn); }
+
+  .grid { display: grid; gap: 14px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-2w { grid-template-columns: 1.5fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  @media (max-width: 980px) { .grid-2, .grid-2w, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+  .card h3 { font-size: 15px; margin: 0 0 4px; font-weight: 700; }
+  .card p.sub { color: var(--muted); font-size: 12px; margin: 4px 0 12px; line-height: 1.5; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line-2); }
+  th { color: var(--muted); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tr:last-child td { border-bottom: none; }
+  td b { font-weight: 700; }
+  tr.ghost td { opacity: 0.45; }
+
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+  .pill.green { background: var(--good-soft); color: var(--good); }
+  .pill.blue { background: var(--accent-soft); color: var(--accent); }
+  .pill.amber { background: var(--warn-soft); color: var(--warn); }
+  .pill.magenta { background: var(--brand-soft); color: var(--brand); }
+  .pill.violet { background: var(--violet-soft); color: var(--violet); }
+  .pill.gray { background: var(--line-2); color: var(--muted); }
+  .cloud-chip { display: inline-block; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 5px; letter-spacing: 0.04em; }
+  .cloud-chip.c1 { background: #e8f0fe; color: #1d4ed8; }
+  .cloud-chip.c2 { background: #fdeee4; color: #c2410c; }
+  .cloud-chip.c3 { background: #e9f7ef; color: #117a4f; }
+  .cloud-chip.c4 { background: var(--violet-soft); color: var(--violet); }
+
+  .funnel { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+  .stage { display: grid; grid-template-columns: 230px 1fr 100px 70px; gap: 12px; align-items: center; font-size: 13px; }
+  .stage .name { color: var(--ink-2); font-weight: 500; }
+  .stage .bar { height: 22px; background: var(--line-2); border-radius: 6px; overflow: hidden; }
+  .stage .fill { height: 100%; background: linear-gradient(90deg, var(--brand), #d9469f); border-radius: 6px; }
+  .stage .num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .stage .pct { text-align: right; color: var(--muted); font-size: 12px; }
+
+  .journey { display: flex; align-items: stretch; gap: 0; overflow-x: auto; padding: 8px 0; }
+  .j-step { flex: 1; min-width: 118px; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+  .j-step.c1 { border-top: 3px solid #1d4ed8; }
+  .j-step.c2 { border-top: 3px solid #c2410c; }
+  .j-step.c3 { border-top: 3px solid #117a4f; }
+  .j-step.dark { opacity: 0.45; border-style: dashed; background: var(--line-2); }
+  .j-step .platform { font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 800; }
+  .j-step .label { font-size: 12px; font-weight: 600; margin-top: 4px; line-height: 1.3; }
+  .j-step .count { font-size: 17px; font-weight: 800; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .j-step .pct { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .j-arrow { display: flex; align-items: center; justify-content: center; padding: 0 4px; color: var(--muted); font-size: 17px; flex-shrink: 0; }
+
+  .seg { display: grid; grid-template-columns: 210px 1fr 90px 80px; gap: 10px; align-items: center; margin-bottom: 9px; font-size: 12px; }
+  .seg .name { color: var(--ink-2); font-weight: 500; }
+  .seg .bar { height: 9px; background: var(--line-2); border-radius: 5px; overflow: hidden; }
+  .seg .fill { height: 100%; background: var(--brand); border-radius: 5px; }
+  .seg .v { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .seg .t { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  .insight { display: flex; gap: 12px; padding: 12px 14px; background: var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 8px; margin-top: 12px; }
+  .insight.win { background: var(--good-soft); border-left-color: var(--good); }
+  .insight.warn { background: var(--warn-soft); border-left-color: var(--warn); }
+  .insight.brand { background: var(--brand-soft); border-left-color: var(--brand); }
+  .insight .icon { font-size: 16px; flex-shrink: 0; }
+  .insight h4 { font-size: 13px; margin: 0 0 4px; font-weight: 700; }
+  .insight p { font-size: 12px; margin: 0; color: var(--ink-2); line-height: 1.55; }
+
+  .cloud-card { border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: var(--panel); }
+  .cloud-card .head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 6px; flex-wrap: wrap; }
+  .cloud-card h4 { font-size: 13px; font-weight: 700; margin: 0; }
+  .cloud-card .vendor { font-size: 11px; color: var(--muted); }
+  .cloud-card ul { margin: 8px 0 0; padding-left: 16px; font-size: 12px; color: var(--ink-2); line-height: 1.55; }
+  .cloud-card ul li { margin-bottom: 3px; }
+  .cloud-card.live { border-color: var(--good); box-shadow: 0 0 0 1px rgba(17,122,79,0.25); }
+
+  .road { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 980px) { .road { grid-template-columns: 1fr; } section.module { scroll-margin-top: 150px; } }
+  .road .ph { border: 1px solid var(--line); border-radius: 12px; padding: 16px; background: var(--panel); }
+  .road .ph.now { border-color: var(--brand); box-shadow: 0 0 0 1px rgba(181,0,125,0.25); }
+  .road .ph h4 { font-size: 14px; margin: 8px 0 6px; font-weight: 800; }
+  .road .ph ul { margin: 0; padding-left: 16px; font-size: 12px; color: var(--ink-2); line-height: 1.6; }
+
+  .chart-box { height: 240px; position: relative; }
+  .chart-sm { height: 200px; position: relative; }
+  .grid > *, .card { min-width: 0; }
+  @media print {
+    .card, .kpi, .poc-item, .cloud-card, .insight, .road .ph, .chart-box, .chart-sm { break-inside: avoid; page-break-inside: avoid; }
+    .modnav { display: none; }
+  }
+
+  .footer { color: var(--muted); font-size: 11px; margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--line); line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="logo">
+      <div class="logo-mark">A</div>
+      <div class="logo-name">AEON360 <span>Commerce Media · Cloud 2 First</span></div>
+    </div>
+    <div style="display: flex; align-items: center;">
+      <a href="../" class="nav-pill">← Full-scope console</a>
+      <div class="powered">Powered by <b>Contentsquare</b><br/>Illustrative data window May 9 – Jun 7, 2026 · modeled Jun 8, 2026</div>
+    </div>
+  </div>
+
+  <!-- MODULE NAV -->
+  <nav class="modnav">
+    <a href="#m4"><span class="n">01</span>Partner reports</a>
+    <a href="#m5"><span class="n">02</span>Inventory value</a>
+    <a href="#m1"><span class="n">03</span>Placement performance</a>
+    <a href="#m2"><span class="n">04</span>Audience &amp; activity</a>
+    <a href="#m3"><span class="n">05</span>Journeys &amp; coverage</a>
+    <a href="#m6"><span class="n">06</span>Architecture &amp; data</a>
+    <a href="#roadmap"><span class="n">→</span>Roadmap</a>
+    <span style="margin-left: auto; align-self: center; background: var(--warn-soft); color: var(--warn); font-size: 10px; font-weight: 800; letter-spacing: 0.12em; padding: 5px 11px; border-radius: 999px;">ILLUSTRATIVE DATA</span>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="crumb">AEON Points mini-app · Cloud 2 first</div>
+    <h1>Start on the membership page — a media business in four weeks</h1>
+    <p class="lede">The same monetization console, scoped to what goes live first: the AEON Points membership page (Hitachi WebView). It carries premium-engagement inventory — 3.0% blended CTR against a 2.28% modeled app-wide rate — it satisfies every item on the team's validation checklist on its own, and it puts a sellable partner report in Azif's hands while the wallet-home approvals are still in flight. Ghosted elements show exactly what Cloud 1 and Cloud 3 add when they join.</p>
+    <div class="badges">
+      <span class="badge">Scope · <b>AEON Points membership page only (Cloud 2)</b></span>
+      <span class="badge">Identity · <b>AMP ID (hashed) — no email, no direct PII</b></span>
+      <span class="badge">Capture · <b>100% automatic, retroactive — no tagging plan</b></span>
+      <span class="badge"><b>Illustrative data</b> · modeled on the architecture &amp; placements you shared</span>
+    </div>
+  </div>
+
+  <!-- SCOPE BANNER -->
+  <div class="scope">
+    <div class="icon">2</div>
+    <div>
+      <h3>What "Cloud 2 first" means</h3>
+      <p>Only the <b>Hitachi membership WebView</b> is instrumented in this scenario — one JS tag, one CSP whitelist entry, one AEON Credit sign-off. The wallet home carousel (Cloud 1) and Super Deals (Cloud 3) appear <b>ghosted</b> where they would extend the picture. Capture is retroactive from each tag's go-live, so starting smaller loses nothing: each cloud's history begins the day its tag ships.</p>
+    </div>
+  </div>
+
+  <!-- KPI STRIP -->
+  <div class="kpis">
+    <div class="kpi">
+      <div class="l">Membership sessions · 30 days</div>
+      <div class="v">3.1M</div>
+      <div class="bench">≈37M run-rate (×12) — entry-tier volume, priced well below the 100–200M band</div>
+    </div>
+    <div class="kpi">
+      <div class="l">Unique active users / day</div>
+      <div class="v">102K</div>
+      <div class="bench">Peak <b>120K</b> · Member Day weekend (May 30–31)</div>
+    </div>
+    <div class="kpi">
+      <div class="l">Ad impressions · 30 days</div>
+      <div class="v">5.5M</div>
+      <div class="bench">2 instrumented placements on the membership page</div>
+    </div>
+    <div class="kpi">
+      <div class="l">Blended CTR</div>
+      <div class="v">3.00%</div>
+      <div class="bench">164.8K taps · premium-engagement inventory (modeled app-wide: 2.28%)</div>
+    </div>
+  </div>
+
+  <!-- CHECKLIST -->
+  <div class="poc">
+    <h3>Your validation checklist · all four metrics answerable with Cloud 2 alone</h3>
+    <p style="font-size: 12px; color: var(--ink-2); margin: -4px 0 10px;">Everything a proof-of-concept would set out to demonstrate, shown here on modeled data. The wallet home banner adds reach later — not capability.</p>
+    <div class="poc-grid">
+      <div class="poc-item"><b><span class="check">✓</span>Impressions, clicks &amp; CTR per banner</b><span>Member's Special and Highlights creatives measured individually, including carousel position.</span><br/><span class="where">MODULE 03</span></div>
+      <div class="poc-item"><b><span class="check">✓</span>Unique active users per day</b><span>Daily membership uniques, new vs returning, 30-day trend.</span><br/><span class="where">MODULE 04</span></div>
+      <div class="poc-item"><b><span class="check">✓</span>Active periods</b><span>Hour-by-hour activity profile of the membership audience.</span><br/><span class="where">MODULE 04</span></div>
+      <div class="poc-item"><b><span class="check">✓</span>Journey &amp; lingering time per section</b><span>Most-visited sections and time spent, within the membership mini-app.</span><br/><span class="where">MODULES 04 + 05</span></div>
+    </div>
+  </div>
+
+  <!-- ================= MODULE 01 · PARTNER REPORTS ================= -->
+  <section class="module" id="m4">
+    <div class="mod-head">
+      <span class="mod-chip">Module 01</span>
+      <h2>Partner campaign reports</h2>
+      <span class="phase-chip p2">PHASE 2 · CONVERSIONS</span>
+    </div>
+    <p class="mod-sub">Even at Cloud 2-only scope, two of the three sellable report archetypes are fully in scope — the tenant package (on its Member's Special leg) and the receipt-based points campaign; their conversion legs switch on with Phase 2. The voucher-drop archetype waits for Cloud 3. Each report is shared via scoped access: the partner sees their campaign, nothing else.</p>
+
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+        <div>
+          <h3 style="font-size: 17px;">UNIQLO · Member Exclusive <span class="pill magenta" style="margin-left: 6px;">Archetype 1 · 6-month tenant package · Member's Special leg</span></h3>
+          <p class="sub" style="margin-bottom: 0;">Jan 5 – Jul 5, 2026 · spend attributed to the instrumented placement: RM 78,000 · placement: Member's Special carousel · shown at steady state — after go-live, the report covers campaign weeks from the tag's first day onward</p>
+        </div>
+        <span class="pill green">Active · on pace</span>
+      </div>
+
+      <div class="grid grid-4">
+        <div class="kpi"><div class="l">Members reached</div><div class="v">980K</div><div class="bench">73% of monthly membership actives</div></div>
+        <div class="kpi"><div class="l">Impressions</div><div class="v">2.6M</div><div class="bench">Frequency 2.7 per member</div></div>
+        <div class="kpi"><div class="l">Click-through rate</div><div class="v">3.80%</div><div class="bench">98.8K taps · leading indicator</div></div>
+        <div class="kpi"><div class="l">Exposed members who purchased <span class="phase-chip p2" style="font-size: 8px; padding: 1px 5px;">P2</span></div><div class="v">15.4K</div><div class="bench">at Uniqlo, within attribution window</div></div>
+      </div>
+
+      <div class="grid grid-2w" style="margin-top: 14px;">
+        <div class="card" style="border-color: var(--line-2); background: #fcfbfe;">
+          <h3>Leading vs lagging · weekly CTR and cumulative purchases</h3>
+          <p class="sub">CTR (line) gives the partner weekly confidence the campaign is alive; cumulative purchases (bars) are what drive the dollars. Creative refresh in week 10 lifted CTR from 3.5% to 3.9%.</p>
+          <div class="chart-box"><canvas id="partnerChart"></canvas></div>
+        </div>
+        <div class="card" style="border-color: var(--line-2); background: #fcfbfe;">
+          <h3>Incremental uplift · exposed vs matched control <span class="phase-chip p2" style="font-size: 9px; padding: 2px 6px; vertical-align: middle;">PHASE 2</span></h3>
+          <table>
+            <tr><td>Purchase rate · exposed members</td><td class="num"><b>1.57%</b></td></tr>
+            <tr><td>Purchase rate · matched control</td><td class="num">1.24%</td></tr>
+            <tr><td>Relative uplift</td><td class="num"><span class="pill green">+27%</span></td></tr>
+            <tr><td>Incremental transactions</td><td class="num"><b>+3,230</b></td></tr>
+            <tr><td>Incremental sales (avg basket RM 146)</td><td class="num"><b>RM 472K</b></td></tr>
+            <tr><td>Incremental ROAS on attributed spend</td><td class="num"><b>6.0×</b></td></tr>
+          </table>
+          <div class="insight win" style="margin-top: 10px;">
+            <div class="icon">🤝</div>
+            <div>
+              <h4>This table is the renewal conversation</h4>
+              <p>"RM 78K spent, RM 472K incremental sales" closes a renewal even before the hero carousel exists in the report. With Cloud 1 live, the same report adds the wallet-home leg, taking impressions to roughly 3× (8.6M vs 2.6M).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-2" style="margin-top: 14px;">
+      <div class="card">
+        <h3>BananaBro · 5× AEON Points <span class="pill violet" style="margin-left: 6px;">Archetype 2 · Receipt-based points campaign</span></h3>
+        <p class="sub">In scope at Cloud 2 plus the receipt-backend join — exposure and the snap-submit flow are captured in the mini-app; approval status and new-to-brand are joined server-side. No Cloud 1 or Cloud 3 needed.</p>
+        <table>
+          <tr><td>Impressions · Membership Highlights</td><td class="num">640K</td></tr>
+          <tr><td>Taps</td><td class="num">16.0K · CTR 2.50%</td></tr>
+          <tr><td>Receipts submitted</td><td class="num">4.2K</td></tr>
+          <tr><td>Receipts approved</td><td class="num"><b>3.8K</b> (90%)</td></tr>
+          <tr><td>New-to-brand share</td><td class="num"><span class="pill green">41%</span></td></tr>
+          <tr><td>Repeat receipt within 30 days</td><td class="num">28%</td></tr>
+          <tr><td>Cost per approved receipt (RM 25K package)</td><td class="num"><b>RM 6.60</b></td></tr>
+        </table>
+        <div class="insight win" style="margin-top: 10px;">
+          <div class="icon">🧾</div>
+          <div>
+            <h4>41% new-to-brand is the line that sells the renewal</h4>
+            <p>It reframes the campaign as customer acquisition, not a points subsidy — and this archetype needs nothing beyond Cloud 2 to run end-to-end.</p>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="opacity: 0.55;">
+        <h3>Setel · RM10 voucher <span class="pill gray" style="margin-left: 6px;">Archetype 3 · Voucher drop</span> <span class="pill amber" style="margin-left: 4px;">UNLOCKS WITH CLOUD 3</span></h3>
+        <p class="sub">Voucher drops live in the Super Deals mini-app (Eber PWA). Once Cloud 3's tag ships — a vendor request AEON360 can make directly — this archetype joins the rate card: redemption funnels, voucher utilization, and sell-out pacing per drop.</p>
+        <table>
+          <tr><td>Impressions · Super Deals featured</td><td class="num">—</td></tr>
+          <tr><td>Taps / CTR</td><td class="num">—</td></tr>
+          <tr><td>Vouchers redeemed / used</td><td class="num">—</td></tr>
+          <tr><td>Daily cap sell-out pacing</td><td class="num">—</td></tr>
+        </table>
+        <div class="insight" style="margin-top: 10px;">
+          <div class="icon">🔓</div>
+          <div>
+            <h4>The fastest unlock after go-live</h4>
+            <p>Cloud 3 needs no AEON Credit approval — only the Eber deployment. In the full-scope model this inventory carries the app's highest CTR (4.6%).</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MODULE 02 · INVENTORY VALUE ================= -->
+  <section class="module" id="m5">
+    <div class="mod-head">
+      <span class="mod-chip">Module 02</span>
+      <h2>Inventory value · what the membership page is worth</h2>
+    </div>
+    <p class="mod-sub">5.5M monthly impressions, priced. Same SEA wallet / super-app CPM assumptions as the full-scope model — and worth noting: this is premium-engagement inventory — 3.0% blended CTR measured — so the membership page earns its CPM before the bigger reach arrives.</p>
+
+    <div class="grid grid-2w">
+      <div class="card">
+        <h3>Monthly ad revenue potential · by scenario</h3>
+        <div class="chart-box"><canvas id="yieldChart"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Scenario assumptions</h3>
+        <table>
+          <thead><tr><th>Scenario</th><th class="num">CPM</th><th class="num">Sell-through</th><th class="num">Monthly</th><th class="num">Annual</th></tr></thead>
+          <tbody>
+            <tr><td>Conservative</td><td class="num">RM 10</td><td class="num">30%</td><td class="num">RM 16.5K</td><td class="num">RM 198K</td></tr>
+            <tr><td><b>Base</b></td><td class="num">RM 15</td><td class="num">50%</td><td class="num"><b>RM 41.3K</b></td><td class="num"><b>RM 495K</b></td></tr>
+            <tr><td>Stretch</td><td class="num">RM 20</td><td class="num">70%</td><td class="num">RM 77K</td><td class="num">RM 924K</td></tr>
+          </tbody>
+        </table>
+        <div class="insight brand" style="margin-top: 12px;">
+          <div class="icon">📐</div>
+          <div>
+            <h4>Entry-tier traffic means entry-tier platform pricing</h4>
+            <p>At ≈37M sessions a year, the contract starts well below the USD 80–135K band quoted for 100–200M sessions (precise quote on confirmed volume, onboarding services additional). And the expansion math is built in: Clouds 1 and 3 take instrumented impressions to ~27.0M — roughly 5× today's 5.5M monthly — under the same contract structure.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MODULE 03 · PLACEMENTS ================= -->
+  <section class="module" id="m1">
+    <div class="mod-head">
+      <span class="mod-chip">Module 03</span>
+      <h2>Placement performance</h2>
+      <span class="phase-chip p1">PHASE 1 · DAY ONE</span>
+    </div>
+    <p class="mod-sub">Phase 1 fundamentals, live from the first week in production: impressions, taps and CTR for every monetizable placement on the membership page — captured automatically, with no tagging plan. Layout type and slot position map straight from the JSON payload your ad component already renders; placement ID and name arrive via the lightweight payload enrichment we discussed.</p>
+
+    <div class="card">
+      <h3>Placements · last 30 days</h3>
+      <table>
+        <thead>
+          <tr><th>Placement</th><th>Surface</th><th class="num">Impressions</th><th class="num">Taps</th><th class="num">CTR</th><th class="num">Trend</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><b>Member's Special carousel</b></td><td><span class="cloud-chip c2">CLOUD 2 · MEMBERSHIP</span></td><td class="num">2,900,000</td><td class="num">110,200</td><td class="num"><b>3.80%</b></td><td class="num"><span class="pill green">▲ +0.5pp</span></td></tr>
+          <tr><td>Highlights &amp; member rewards tiles</td><td><span class="cloud-chip c2">CLOUD 2 · MEMBERSHIP</span></td><td class="num">2,600,000</td><td class="num">54,600</td><td class="num">2.10%</td><td class="num"><span class="pill gray">flat</span></td></tr>
+          <tr class="ghost"><td>Home Hero Carousel · first page</td><td><span class="cloud-chip c1">CLOUD 1 · WALLET</span></td><td class="num">~11.2M</td><td class="num">—</td><td class="num">—</td><td class="num"><span class="pill amber">awaiting Cloud 1</span></td></tr>
+          <tr class="ghost"><td>AEON Retail Hot Deals strip</td><td><span class="cloud-chip c1">CLOUD 1 · WALLET</span></td><td class="num">~8.9M</td><td class="num">—</td><td class="num">—</td><td class="num"><span class="pill amber">awaiting Cloud 1</span></td></tr>
+          <tr class="ghost"><td>Super Deals featured tiles</td><td><span class="cloud-chip c3">CLOUD 3 · SUPER DEALS</span></td><td class="num">~1.4M</td><td class="num">—</td><td class="num">—</td><td class="num"><span class="pill amber">awaiting Cloud 3</span></td></tr>
+        </tbody>
+      </table>
+      <div class="insight brand">
+        <div class="icon">📍</div>
+        <div>
+          <h4>You start with the quality inventory, not the leftovers</h4>
+          <p>Membership-page placements run 3.0% blended CTR — above the modeled 2.28% app-wide rate — because everyone here chose to engage with the loyalty program. The ghosted rows are reach waiting on approvals, not capability gaps.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-2w" style="margin-top: 14px;">
+      <div class="card">
+        <h3>Creative leaderboard · top campaigns on the membership page</h3>
+        <p class="sub">Placement, layout and slot come from the ad payload; campaign and advertiser are joined server-side from the Cloud 4 ad portal — nothing extra to expose in the front end. Redemption counts illustrate Phase 2 conversion tracking; Phase 1 reports impressions, taps and CTR.</p>
+        <table>
+          <thead>
+            <tr><th>Creative</th><th>Placement</th><th class="num">Impr.</th><th class="num">Taps</th><th class="num">CTR</th><th class="num">Redemptions <span class="phase-chip p2" style="font-size: 9px; padding: 2px 6px;">PHASE 2</span></th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b>MEGA SALE · Home Appliance</b> (Magentara)</td><td>Member's Special · slot 1</td><td class="num">1.10M</td><td class="num">49.5K</td><td class="num"><b>4.50%</b></td><td class="num">6.1K</td></tr>
+            <tr><td>UNIQLO · Member Exclusive</td><td>Member's Special · slot 2</td><td class="num">520K</td><td class="num">19.8K</td><td class="num">3.80%</td><td class="num">3.1K purchases</td></tr>
+            <tr><td>BananaBro · 5× AEON Points</td><td>Highlights</td><td class="num">640K</td><td class="num">16.0K</td><td class="num">2.50%</td><td class="num">4.2K receipts</td></tr>
+            <tr><td>Starbucks · 5× AEON Points</td><td>Highlights</td><td class="num">598K</td><td class="num">13.8K</td><td class="num">2.31%</td><td class="num">3.6K receipts</td></tr>
+            <tr><td>ZUS Coffee · 3× AEON Points</td><td>Highlights</td><td class="num">565K</td><td class="num">11.9K</td><td class="num">2.11%</td><td class="num">2.9K receipts</td></tr>
+            <tr><td>The Chicken Rice Shop · 5× points</td><td>Highlights</td><td class="num">512K</td><td class="num">9.7K</td><td class="num">1.89%</td><td class="num">2.1K receipts</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h3>Member's Special carousel · CTR by slot</h3>
+        <p class="sub">Mapped automatically from the <span style="font-family: ui-monospace, Menlo, monospace; font-size: 11px; background: var(--line-2); padding: 1px 5px; border-radius: 4px;">sequence</span> field in your ad payload. Slot 1 earns 1.5× the CTR of slot 3 — position-based pricing works on the membership page from day one.</p>
+        <div class="chart-sm"><canvas id="slotChart"></canvas></div>
+        <div class="insight" style="margin-top: 12px;">
+          <div class="icon">💰</div>
+          <div>
+            <h4>Price slots, not just placements</h4>
+            <p>With per-slot CTR proven, slot 1 justifies a premium tier on the rate card. Today all slots would be sold blind at the same price.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MODULE 04 · AUDIENCE ================= -->
+  <section class="module" id="m2">
+    <div class="mod-head">
+      <span class="mod-chip">Module 04</span>
+      <h2>Audience &amp; activity</h2>
+      <span class="phase-chip p1">PHASE 1 · DAY ONE</span>
+    </div>
+    <p class="mod-sub">The membership audience: 1.34M unique users in 30 days, 2.3 sessions per user per month, 86% returning. This is the audience story Azif sells to partners — loyalty-program members in a transactional mindset.</p>
+
+    <div class="grid grid-2w">
+      <div class="card">
+        <h3>Unique active users per day · 30 days</h3>
+        <p class="sub">Membership-page uniques. Member Day weekend (May 30–31) lifts the curve ~18%.</p>
+        <div class="chart-box"><canvas id="dauChart"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Active periods · share of daily activity by hour</h3>
+        <p class="sub">Two clear peaks: lunch (12–2 PM) and evening (8–10 PM). Campaign go-lives scheduled outside these windows leave reach on the table.</p>
+        <div class="chart-box"><canvas id="hourlyChart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 14px;">
+      <h3>Section engagement · visits and lingering time within the mini-app</h3>
+      <p class="sub">Sessions reaching each section of the membership page, with average time spent per visit. The bar shows reach; the right column is attention.</p>
+      <div class="seg"><div class="name">Membership landing</div><div class="bar"><div class="fill" style="width: 100%"></div></div><div class="v">3.10M</div><div class="t">0:24 avg</div></div>
+      <div class="seg"><div class="name">Promotions &amp; Member's Special</div><div class="bar"><div class="fill" style="width: 59.7%"></div></div><div class="v">1.85M</div><div class="t">0:48 avg</div></div>
+      <div class="seg"><div class="name">Highlights &amp; member rewards</div><div class="bar"><div class="fill" style="width: 45.8%"></div></div><div class="v">1.42M</div><div class="t">1:32 avg</div></div>
+      <div class="seg"><div class="name">Brand reward pages (BananaBro, ZUS…)</div><div class="bar"><div class="fill" style="width: 19.7%"></div></div><div class="v">610K</div><div class="t">1:18 avg</div></div>
+      <div class="seg"><div class="name">Points history &amp; statements</div><div class="bar"><div class="fill" style="width: 17.4%"></div></div><div class="v">540K</div><div class="t">0:46 avg</div></div>
+      <div class="insight win">
+        <div class="icon">⏱</div>
+        <div>
+          <h4>Rewards browsing holds attention longest — and it's where the brand campaigns live</h4>
+          <p>Users spend 1:32 per visit in Highlights &amp; rewards — nearly 4× the landing page. The receipt-campaign inventory (BananaBro, Starbucks, ZUS) sits exactly where attention is deepest.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MODULE 05 · JOURNEYS & COVERAGE ================= -->
+  <section class="module" id="m3">
+    <div class="mod-head">
+      <span class="mod-chip">Module 05</span>
+      <h2>Journeys &amp; the coverage map</h2>
+      <span class="phase-chip p1">PHASE 1 · DAY ONE</span>
+      <span class="phase-chip p2">CONVERSION STAGES · PHASE 2</span>
+    </div>
+    <p class="mod-sub">What the journey looks like with one cloud lit. Inside Cloud 2, every step is stitched on AMP ID. The dark ends of the path — where the user came from, and where Super Deals takes them — are exactly what Cloud 1 and Cloud 3 switch on.</p>
+
+    <div class="card">
+      <h3>The membership journey · with the dark segments shown honestly</h3>
+      <div class="journey">
+        <div class="j-step c1 dark"><div class="platform">Cloud 1 · Wallet</div><div class="label">Wallet home tap</div><div class="count">?</div><div class="pct">dark until Cloud 1</div></div>
+        <div class="j-arrow">⇢</div>
+        <div class="j-step c2"><div class="platform">Cloud 2 · Membership</div><div class="label">Landing reached</div><div class="count">3.10M</div><div class="pct">100%</div></div>
+        <div class="j-arrow">→</div>
+        <div class="j-step c2"><div class="platform">Cloud 2 · Membership</div><div class="label">≥1 placement viewed</div><div class="count">2.62M</div><div class="pct">84.5%</div></div>
+        <div class="j-arrow">→</div>
+        <div class="j-step c2"><div class="platform">Cloud 2 · Membership</div><div class="label">Placement tapped</div><div class="count">152K</div><div class="pct">4.9%</div></div>
+        <div class="j-arrow">→</div>
+        <div class="j-step c2" style="border-style: dashed;"><div class="platform">Cloud 2 · Membership <span class="phase-chip p2" style="font-size: 8px; padding: 1px 6px;">P2</span></div><div class="label">Reward action completed</div><div class="count">47K</div><div class="pct">1.5%</div></div>
+        <div class="j-arrow">⇢</div>
+        <div class="j-step c3 dark"><div class="platform">Cloud 3 · Super Deals</div><div class="label">Deal continuation</div><div class="count">?</div><div class="pct">dark until Cloud 3</div></div>
+      </div>
+      <div class="insight">
+        <div class="icon">🗺</div>
+        <div>
+          <h4>The dark segments are the expansion business case, written by your own data</h4>
+          <p>After four weeks of Cloud 2 data, you'll know exactly how many tapped sessions dead-end at the Super Deals boundary and how much entry traffic arrives unattributed from the wallet home. Those two numbers — measured, not estimated — are the internal argument for the Cloud 1 and Cloud 3 sign-offs.</p>
+        </div>
+      </div>
+      <div class="insight warn">
+        <div class="icon">🕐</div>
+        <div>
+          <h4>Return visits already stitch — +9.8K delayed reward actions within 14 days <span class="phase-chip p2" style="font-size: 9px; padding: 2px 6px; vertical-align: middle;">PHASE 2</span></h4>
+          <p>Beyond the 47K same-journey completions, another 9.8K members exposed to a membership placement completed the reward action on a later visit within 14 days — a 21% addition invisible to click-only reporting. AMP ID stitching works the moment Cloud 2 is live; it doesn't wait for the other clouds.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MODULE 06 · ARCHITECTURE ================= -->
+  <section class="module" id="m6">
+    <div class="mod-head">
+      <span class="mod-chip">Module 06</span>
+      <h2>Architecture, identity &amp; data</h2>
+    </div>
+    <p class="mod-sub">The four-cloud estate with the Cloud 2-first rollout status on each surface — who instruments what, and in which order.</p>
+
+    <div class="grid grid-4">
+      <div class="cloud-card live">
+        <div class="head"><h4>Membership <span class="cloud-chip c2">CLOUD 2</span></h4><span class="pill green">START HERE</span></div>
+        <div class="vendor">Hitachi · AWS · React WebView in native</div>
+        <ul>
+          <li>JS tag in the WebView · covers AEON Points pages</li>
+          <li>CSP whitelist for the tag domain, coordinated with Hitachi</li>
+          <li>Instrumentation requires AEON Credit Service approval</li>
+        </ul>
+      </div>
+      <div class="cloud-card">
+        <div class="head"><h4>Wallet App <span class="cloud-chip c1">CLOUD 1</span></h4><span class="pill amber">PHASE 2</span></div>
+        <div class="vendor">Softspace · AWS · native iOS Swift / Android Kotlin</div>
+        <ul>
+          <li>Native SDK · adds hero carousel &amp; Hot Deals — the board's priority placement</li>
+          <li>Instrumentation requires AEON Credit Service approval</li>
+        </ul>
+      </div>
+      <div class="cloud-card">
+        <div class="head"><h4>Super Deals <span class="cloud-chip c3">CLOUD 3</span></h4><span class="pill amber">PHASE 3</span></div>
+        <div class="vendor">Eber · SaaS PWA rendered in the Hitachi WebView</div>
+        <ul>
+          <li>Same JS tag, deployed in the Eber PWA</li>
+          <li>Vendor request handled directly by AEON360 — no AEON Credit gate</li>
+        </ul>
+      </div>
+      <div class="cloud-card live">
+        <div class="head"><h4>Ad Portal <span class="cloud-chip c4">CLOUD 4</span></h4><span class="pill green">ENRICHMENT</span></div>
+        <div class="vendor">AEON360 · GCP · Java backend</div>
+        <ul>
+          <li>Server-side join: placement ID, name, layout, slot — campaign &amp; advertiser stay out of the front end</li>
+          <li>AEON360-owned, no external approval needed</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="grid grid-3" style="margin-top: 14px;">
+      <div class="card">
+        <h3>Pseudonymous identity — no email</h3>
+        <p class="sub" style="margin-bottom: 8px;">AMP ID (hashed) is the master identity — no email collected. Sessions, devices and return visits stitch retroactively the moment a user logs in. If onboarding changes and a new ID is introduced later, the switch is non-destructive.</p>
+        <span class="pill magenta">AMP ID master</span> <span class="pill gray">email not required</span> <span class="pill gray">user properties: tier, BU flags</span>
+      </div>
+      <div class="card">
+        <h3>Masked replay for support</h3>
+        <p class="sub" style="margin-bottom: 8px;">Session replay is a masked reconstruction, not a recording — every sensitive element hidden by default. A support agent can ask a caller for their AMP ID and replay exactly what happened, without exposing personal data.</p>
+        <span class="pill violet">masked by default</span> <span class="pill gray">find session by AMP ID</span>
+      </div>
+      <div class="card">
+        <h3>BigQuery, natively</h3>
+        <p class="sub" style="margin-bottom: 8px;">All behavioral data is queryable from BigQuery in place — no duplicated storage cost, you pay only BigQuery compute. Egress applies only if you copy data out. 13 months retention; Milk's team joins it to transactional data for modeling.</p>
+        <span class="pill blue">no duplicate storage</span> <span class="pill gray">13-month retention</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROADMAP -->
+  <section class="module" id="roadmap">
+    <div class="mod-head">
+      <span class="mod-chip">Rollout</span>
+      <h2>Cloud by cloud · monetization live inside 3 months</h2>
+    </div>
+    <p class="mod-sub">No proof-of-concept detour. The Hitachi CSP whitelist and the AEON Credit sign-off for the membership WebView are the only gates to week-one data — and they are production approvals, not pilot approvals. Secure them once, go live once.</p>
+    <div class="road">
+      <div class="ph now">
+        <span class="pill magenta">PHASE 1 · weeks 1–4</span>
+        <h4>Cloud 2 live · validate in production</h4>
+        <ul>
+          <li>JS tag via Hitachi + CSP whitelist + AEON Credit sign-off</li>
+          <li>Impressions, taps, CTR per creative &amp; slot — membership page</li>
+          <li>Daily uniques, active periods, lingering time</li>
+          <li>The full checklist, answered on live traffic</li>
+        </ul>
+      </div>
+      <div class="ph">
+        <span class="pill amber">PHASE 2 · months 2–3</span>
+        <h4>Cloud 1 joins · monetization on</h4>
+        <ul>
+          <li>Native SDK on the wallet — the first-page banner the board prioritized</li>
+          <li>Conversion events: reward actions, points exchange, purchase</li>
+          <li>Partner campaign reports with scoped access</li>
+          <li>Rate card backed by per-slot CTR data</li>
+        </ul>
+      </div>
+      <div class="ph">
+        <span class="pill gray">PHASE 3 · beyond</span>
+        <h4>Cloud 3 &amp; scale</h4>
+        <ul>
+          <li>Super Deals via the Eber request — voucher-drop archetype unlocks</li>
+          <li>Push-notification attribution</li>
+          <li>All mini-programs as they launch — the playbook proven with super-apps like GCash</li>
+          <li>BigQuery modeling: LTV, propensity, audience packages</li>
+        </ul>
+      </div>
+    </div>
+    <div class="insight win" style="margin-top: 14px;">
+      <div class="icon">⚡</div>
+      <div>
+        <h4>Why this page replaces the pilot</h4>
+        <p>A 4-week POC consumes the same cross-company coordination as a production go-live — then asks everyone to do it twice. Capture is automatic and retroactive, so there is no tagging plan to de-risk. Week-one Cloud 2 data answers every item on the checklist at the top of this page, and generates the measured numbers that argue for the Cloud 1 and Cloud 3 sign-offs.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">
+    All figures are illustrative, modeled in realistic ranges for the membership mini-app of a Malaysian e-wallet (≈37M annual membership sessions within a ~150M-session app); they are not measurements of the AEON Wallet. Placement names, surfaces, vendor architecture and the partner example reflect what AEON360 shared in our June 2026 discussions. Partner brands shown (Uniqlo, Setel, BananaBro, ZUS Coffee, Starbucks, The Chicken Rice Shop) appear solely to make the illustration concrete, with no implied campaign data; Magentara is AEON's own campaign branding as seen in the app. Pricing references the indicative USD 80–135K platform band discussed for 100–200M sessions (onboarding services additional); the Cloud 2-only tier is quoted on confirmed membership session volume. Prepared by Contentsquare for AEON360 · Jun 2026.
+  </div>
+</div>
+
+<script>
+const C = { brand: '#b5007d', violet: '#6d28d9', accent: '#1d4ed8', muted: '#6f6a80', line: '#e7e4ee', good: '#117a4f' };
+Chart.defaults.color = C.muted;
+Chart.defaults.borderColor = C.line;
+Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, Inter, "Segoe UI", system-ui, sans-serif';
+
+new Chart(document.getElementById('partnerChart'), {
+  type: 'bar',
+  data: {
+    labels: ['W2','W4','W6','W8','W10','W12','W14','W16','W18','W20','W22'],
+    datasets: [
+      { type: 'line', label: 'CTR %', data: [3.32,3.45,3.58,3.50,3.92,3.88,3.84,3.82,3.79,3.78,3.80], borderColor: C.brand, backgroundColor: 'rgba(181,0,125,0)', borderWidth: 2, tension: 0.3, pointRadius: 3, yAxisID: 'y1' },
+      { label: 'Cumulative purchases (000s)', data: [1.0,2.2,3.4,4.5,5.7,7.2,8.7,10.1,11.6,13.4,15.4], backgroundColor: 'rgba(109,40,217,0.55)', borderRadius: 4, borderSkipped: false, yAxisID: 'y' }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } } },
+    scales: {
+      y: { position: 'left', grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { callback: v => v + 'K' }, title: { display: true, text: 'Purchases', font: { size: 10 } } },
+      y1: { position: 'right', grid: { display: false }, ticks: { callback: v => v + '%' }, title: { display: true, text: 'CTR', font: { size: 10 } } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+new Chart(document.getElementById('yieldChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Conservative', 'Base', 'Stretch'],
+    datasets: [{ label: 'Monthly revenue (RM K)', data: [16.5, 41.25, 77], backgroundColor: ['#ecc3da', '#c94d9e', '#b5007d'], borderRadius: 6, borderSkipped: false }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => 'RM ' + ctx.parsed.y + 'K / month · RM ' + Math.round(ctx.parsed.y * 12) + 'K / year' } } },
+    scales: { y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { callback: v => 'RM ' + v + 'K' } }, x: { grid: { display: false } } }
+  }
+});
+
+new Chart(document.getElementById('slotChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Slot 1', 'Slot 2', 'Slot 3'],
+    datasets: [{ label: 'CTR %', data: [4.5, 3.7, 3.0], backgroundColor: ['#b5007d', '#c94d9e', '#dd8fbf'], borderRadius: 6, borderSkipped: false }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => 'CTR: ' + ctx.parsed.y + '%' } } },
+    scales: { y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { callback: v => v + '%' } }, x: { grid: { display: false } } }
+  }
+});
+
+new Chart(document.getElementById('dauChart'), {
+  type: 'line',
+  data: {
+    labels: ['May 9','','','May 12','','','May 15','','','May 18','','','May 21','','','May 24','','','May 27','','','May 30','','','Jun 2','','','Jun 5','','Jun 7'],
+    datasets: [{ label: 'Unique users (000s)', data: [96,98,99,97,95,102,106,98,97,95,100,103,109,106,98,96,97,99,102,105,111,114,120,116,107,101,98,99,103,101], borderColor: C.brand, backgroundColor: 'rgba(181,0,125,0.08)', tension: 0.32, fill: true, borderWidth: 2, pointRadius: 2 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.parsed.y + 'K unique users' } } },
+    scales: { y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { callback: v => v + 'K' } }, x: { grid: { display: false }, ticks: { maxRotation: 0, autoSkip: false } } }
+  }
+});
+
+new Chart(document.getElementById('hourlyChart'), {
+  type: 'bar',
+  data: {
+    labels: ['12a','1a','2a','3a','4a','5a','6a','7a','8a','9a','10a','11a','12p','1p','2p','3p','4p','5p','6p','7p','8p','9p','10p','11p'],
+    datasets: [{ label: 'Share of daily activity', data: [1.0,0.7,0.4,0.3,0.3,0.5,1.3,2.7,4.0,4.9,5.6,6.6,8.1,7.3,5.6,4.9,5.1,5.5,6.1,6.9,7.8,7.1,4.7,2.6], backgroundColor: 'rgba(109,40,217,0.75)', borderRadius: 4, borderSkipped: false }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.parsed.y + '% of daily activity' } } },
+    scales: { y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { callback: v => v + '%' } }, x: { grid: { display: false } } }
+  }
+});
+</script>
+</body>
+</html>
